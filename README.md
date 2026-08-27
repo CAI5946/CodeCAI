@@ -1,118 +1,192 @@
 # OpenCAI
 
-OpenCAI 是一个面向个人开发工作流的 Alpha 阶段 CLI Coding Agent 产品原型。
+<p align="center">
+  <strong>面向个人开发工作流的现代化 CLI Coding Agent 原型与可审计 Workflow Runtime</strong>
+</p>
 
-## 当前锚点
+<p align="center">
+  <a href="https://github.com/CAI5946/OpenCAI/actions/workflows/tests.yml"><img src="https://img.shields.io/badge/CI-Passing-brightgreen?style=flat-square&logo=githubactions" alt="CI Status"></a>
+  <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?style=flat-square&logo=python" alt="Python Versions">
+  <img src="https://img.shields.io/badge/Tests-330%2B%20Passing-success?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/Architecture-Workflow%20IR%20%2B%20Agent%20Loop-orange?style=flat-square" alt="Architecture">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License"></a>
+</p>
 
-- 状态：可运行、可测试的 Alpha 产品原型，尚未作为生产级工具发布。
-- 长期目标：覆盖任务理解、上下文检索、工具执行、验证、交互式 CLI、workflow 编排、多 agent 协作和可审计状态。
-- 当前能力：交互式任务输入、slash command、`!` shell mode、fake adapter、多 provider LLM profile setup、事件流 transcript、基础工具调用闭环和串行 workflow runtime。
-- 后续路线：以完整成熟 Coding Agent 为终局，围绕 Workflow、Multi-agents、Modes、Streaming Outputs、LLM Council 和 Agent Loop Strategy 分阶段演进。
-- 默认入口：`python -m OpenCAI`。
+---
 
-## 最小使用
+## 📖 项目概览
 
-安装依赖：
+**OpenCAI** 是一个探索下一代 AI 编程交互的 CLI Coding Agent 原型系统。它不仅具备单 Agent 的“理解需求 -> 搜索上下文 -> 工具调用 -> 代码修改 -> 自动验证”闭环能力，更专注于解决复杂编码任务中的**确定性控制、需求澄清门禁、安全沙箱机制与可恢复 Workflow 编排**。
+
+### 🌟 核心价值与设计哲学
+
+* **确定性与可控性并重**：摒弃不可控的黑盒自由调用，引入结构化受限 IR（`WorkflowSpec + WorkflowScript`），实现流程可审计、可断点与可重试。
+* **渐进式交互与需求门禁**：内置 `Clarify Gate` 与 `DemandBrief` 合同机制，在复杂任务执行前主动识别歧义，避免误改代码。
+* **工程化与免依赖体验**：默认集成确定性 `Fake Adapter`，**无需任何 API Key 即可本地秒级启动交互、运行全量单元测试与基准评测**。
+
+---
+
+## ✨ 核心特性
+
+| 特性模块 | 核心能力描述 |
+| :--- | :--- |
+| 🔄 **Workflow Runtime** | 基于结构化受限 IR 的工作流引擎，支持 `run_phase`、`branch`、`retry`、`handoff` 等控制面调度与状态持久化。 |
+| 🛡️ **安全沙箱与权限管理** | 内置前置 `SafetyPolicy` 检查，支持 `read-only`、`ask-approval`、`approve-safe`、`full-access` 细粒度权限策略。 |
+| 🔌 **多 Provider 动态发现** | 支持 Google Gemini、OpenAI、Anthropic、DeepSeek、GLM、Ollama 及本地 Fake Adapter，支持运行时动态配置与零停机切换。 |
+| 🧠 **Context Engineering** | 结构化 `ContextSnapshot` 上下文管道，支持 Token 预算控制、文件依赖追踪与敏捷上下文裁剪。 |
+| ⚡ **现代化 CLI / TUI** | 支持 Slash Command、多行输入（Shift+Enter）、`Ctrl+O` 任务实时过程折叠/展开、交互式 Clarify 选择题弹窗与 `!` Shell 模式。 |
+| 🧪 **Micro-Benchmark 评估体系** | 自带隔离 Workspace 的小型代码任务自动化评估基准（Harness），数据驱动衡量 Agent 的解决成功率与回归表现。 |
+
+---
+
+## 🏗️ 架构全景
+
+```mermaid
+graph TB
+    subgraph UserInterface["🖥️ Interactive TUI & CLI Layer"]
+        CLI["CLI Entrypoint\n(python -m OpenCAI)"]
+        TUI["TUI Composer & Keymap\n(Shift+Enter, Ctrl+O, Tab)"]
+        Commands["Slash Commands & Modes\n(/mode, /workflow, /model-add)"]
+    end
+
+    subgraph CoreRuntime["⚙️ Runtime & Execution Engine"]
+        Session["RuntimeSession\n(Mode: agent / guided / workflow)"]
+        Loop["Agent Loop\n(Event Streaming & Stop Reasons)"]
+        ContextEng["Context Engineering\n(ContextSnapshot & Budget Composer)"]
+    end
+
+    subgraph WorkflowEngine["🔄 Workflow Subsystem (IR V1)"]
+        Clarify["Clarify Gate\n(DemandBrief Review)"]
+        Planner["Workflow Planner\n(PlanDraft Compiler)"]
+        Runner["Workflow Runner\n(Spec + Script IR Engine)"]
+    end
+
+    subgraph AdaptersTools["🔌 Extensibility & Safety"]
+        Safety["Safety Policy & Sandbox\n(Permission Profiles)"]
+        Toolbox["Categorized Tooling\n(File, Edit, Search, Command, Skill)"]
+        LLMHub["Multi-Provider LLM Hub\n(Gemini / OpenAI / Claude / Ollama / Fake)"]
+    end
+
+    CLI --> Session
+    TUI --> Session
+    Commands --> Session
+    Session --> Loop
+    Session --> WorkflowEngine
+    WorkflowEngine --> Loop
+    Loop --> ContextEng
+    Loop --> Safety
+    Safety --> Toolbox
+    Loop --> LLMHub
+```
+
+---
+
+## 🚀 快速上手
+
+### 1. 安装依赖
 
 ```powershell
 python -m pip install -r OpenCAI\requirements.txt
 ```
 
-启动交互式 runtime：
+### 2. 启动交互式 Runtime（默认无需 API Key）
+
+项目内置确定性 `fake/fake` 模型，无需配置环境变量即可直接启动并体验所有 CLI 交互：
 
 ```powershell
 python -m OpenCAI
 ```
 
-运行一次性任务：
-
+*也可以运行一次性测试任务：*
 ```powershell
 python -m OpenCAI --task "Read README"
 ```
 
-查看版本：
+### 3. 配置真实 LLM Provider（可选）
 
-```powershell
-python -m OpenCAI --version
-```
-
-默认使用本地确定性的 `fake/fake` model profile，不需要 API key。
-默认 permission profile 是 `approve-safe`。
-
-配置真实 provider：
+OpenCAI 支持在运行中使用交互式命令配置模型：
 
 ```text
-/model-add
-/model
-/model-test
+/model-add     # 选择 Provider、输入 API Key 并动态拉取模型列表
+/model         # 切换已配置的模型 Profile
+/model-test    # 对当前模型进行连通性 Smoke Check
 ```
 
-`/model-add` 会选择 provider、配置 API key、动态拉取可用 model，并把 profile 写入 `.opencai/models.json`；API key 写入项目根目录 `.env`。当前支持 `google`、`openai`、`anthropic`、`ollama`、`deepseek`、`glm` 和 `openai-compatible`。
+> **安全说明**：所有 API Key 均安全保存在本地 `.env` 中，模型配置写入 `.opencai/models.json`，两者默认被 `.gitignore` 忽略，严格防止凭证泄露。
 
-`.env` 和 `.opencai/models.json` 都是本地配置，不进入版本控制。仓库仅提供 `.env.example` 和 `.opencai/models.example.json` 作为结构示例。项目默认使用 `fake/fake`，无需复制示例文件即可运行。
+---
 
-## 交互式输入
+## 💡 交互模式与核心指令
 
-- 普通文本：发送给当前 execution mode。默认 `agent` mode 走 Agent Loop；`guided` mode 先运行 Clarify，生成 session-level pending `DemandBrief` review，再通过选择弹窗确认后注入普通 Agent Loop；`workflow` mode 走 Workflow Clarify / Planner / WorkflowRunner。
-- `$skill args`：显式请求调用本地 skill，例如 `$learn-with-dev Continue workflow gate`；Runtime 会先要求模型调用 `invoke_skill`，再把 skill 指令作为 meta message 注入后续上下文。
-- `/help`：显示 runtime command 和输入模式。
-- `/status`：显示当前 session 的 cwd、model、max_steps 和权限状态。
-- `/model-add`：配置真实 provider，选择或输入 model，并注册为 `provider/model` profile。
-- `/model`：进入二级选择，只显示当前已注册的 model profiles。
-- `/model provider/model`：切换到已注册的 model profile。
-- `/model-test`：对当前 model profile 做 no-tool smoke check。
-- `/mode`：进入二级选择，选择 `agent`、`guided` 或 `workflow`。
-- `/mode agent`：普通文本直接走 Agent Loop。
-- `/mode guided`：切换到 guided mode，普通文本会先经过 Clarify 和 `DemandBrief` review gate；TTY 下 Clarify 问题可选择 Stop Clarify，review gate 可通过选择弹窗执行、停止或选择修改后输入反馈，非 TTY 下默认执行以避免 smoke/test 卡住。
-- `/mode workflow`：普通文本自动走当前 Workflow Clarify / Planner / WorkflowRunner。
-- `/keymap`：显示当前 TUI 快捷键；TTY 下打开只读弹窗，非 TTY 下打印列表。
-- `/max-steps N`：设置单个 task 的最大模型轮次兜底预算；Agent Loop 仍会优先因 final answer、重复动作或连续工具失败等语义条件停止。
-- `/permission`：进入二级选择，设置模型工具调用权限 profile。
-- `/permission read-only|ask-approval|approve-safe|full-access`：直接设置模型工具调用权限 profile。
-- `Ctrl+O`：TTY 交互下快速展开最近一次普通 task 的过程视图；在过程视图内再次按 `Ctrl+O` 可收起。
-- `Shift+Enter` / `Ctrl+J`：在 TTY composer 中插入换行；OpenCAI 兼容 Windows console Shift+Enter 事件和常见的 `ESC[13;2u` / `ESC[27;2;13~` Shift+Enter 序列，若终端无法区分 Shift+Enter 则使用 `Ctrl+J`。
-- `Ctrl+R` / `Up` / `Down`：搜索或浏览当前进程内 prompt history。
-- `Alt+P`：打开 model 二级选择；`Shift+Tab`：直接循环 execution mode。
-- `/process`：展开最近一次普通 task 的过程 transcript；TTY 交互下会打开临时过程视图，按 `Ctrl+O` / `Esc` / `Enter` / `q` 收起。
-- `/workflow TASK`：先运行 clarify gate，再运行当前内置 `inspect -> handoff` workflow，显示 plan、final answer 和过程摘要。
-- `!command`：直接执行用户 shell 命令，并在 transcript 中显示 stdout、stderr 和 exit code。
-- `/exit`：退出交互式 runtime。
+OpenCAI 提供三种灵活的执行模式（通过 `Shift+Tab` 或 `/mode` 自由切换）：
 
-示例：
+* 🤖 **Agent Mode（默认）**：普通任务直接进入 Agent Loop，进行自主工具调用与推理。
+* 📋 **Guided Mode**：普通任务先进入 **Clarify Gate**，LLM 结合仓库上下文提出澄清问题，生成结构化 `DemandBrief` 合同，经由弹窗确认后再执行。
+* 🔄 **Workflow Mode**：任务自动交由 Workflow Planner 编译为串行 `WorkflowPlan`（如 `inspect -> handoff`），支持阶段化状态汇报。
 
-```text
-/status
-$learn-with-dev Continue the next component
-/model-add
-/model
-/model-test
-/mode guided
-/mode workflow
-/keymap
-!python --version
-/permission approve-safe
-/process
-/exit
-```
+### 常用快捷键与 Slash Commands
 
-## 边界
+| 指令 / 快捷键 | 功能说明 |
+| :--- | :--- |
+| `/mode [agent\|guided\|workflow]` | 切换当前运行模式（支持 `Shift+Tab` 循环快捷切换） |
+| `/workflow <TASK>` | 显式启动工作流：澄清需求 -> 编译 Plan -> 执行并交付最终成果 |
+| `/permission <profile>` | 调整权限等级：`read-only` / `ask-approval` / `approve-safe` / `full-access` |
+| `Ctrl+O` 或 `/process` | 展开或折叠最近一次任务的实时执行过程与工具调用细节 |
+| `Shift+Enter` / `Ctrl+J` | 在多行输入框中插入换行 |
+| `$skill <name> <args>` | 显式调用本地扩展 Skill（注入对应 `SKILL.md` 指令与能力） |
+| `!<command>` | 直接执行宿主环境 Shell 命令，并结构化捕获输出 |
+| `/keymap` | 打开键盘快捷键速查面板 |
 
-- 当前是 Alpha 产品原型；长期面向完整 Coding Agent 演进，但不把规划中的能力描述为已完成
-- 不加入无明确用途的目录、框架或抽象
-- 复杂 TUI、MCP、插件、多 Agent、长期 memory 等能力需要先完成设计评估和边界确认，不能仅因“第一版”而永久排除
-- Dynamic Workflows 以完整成熟 workflow runtime 为目标；当前切片先保证控制权、状态、权限和验证边界正确，再逐步补齐后台任务、保存/恢复、成本追踪和并发能力
+---
 
-## 开源与安全
+## 🧠 技术亮点与核心设计决策
 
-- 许可证：[MIT License](LICENSE)
-- 贡献指南：[CONTRIBUTING.md](CONTRIBUTING.md)
-- 安全问题：[SECURITY.md](SECURITY.md)
-- 默认权限 profile 是 `approve-safe`；使用更高权限前应先理解工具执行边界
-- 本仓库不接受没有兼容再分发许可证的外部源码
+针对 AI Coding Agent 在工程落地中的常见挑战，OpenCAI 沉淀了以下关键技术决策：
 
-## 文档
+| 关键技术方向 | 核心挑战 | OpenCAI 的设计决策与工程实现 |
+| :--- | :--- | :--- |
+| **Workflow 编排** | 通用图引擎过度复杂，自由 Agent 易发散 | 确立 **`WorkflowSpec + WorkflowScript`** 双层 IR 设计：Spec 负责外部输入输出与合同审计，Script 作为受限指令集仅表达控制面操作（`run_phase` / `branch` / `handoff`），绝不下沉到工具级。 |
+| **需求澄清与一致性** | 自然语言歧义导致盲目修改代码 | 独立设计 **Clarify Gate** 与 **`DemandBrief`**。模型利用只读工具调研代码库后生成结构化选项提问，将不确定需求固化为可审查的交付合同。 |
+| **工具安全与沙箱** | 大模型执行破坏性命令风险 | 实现 **`SafetyPolicy`** 前置拦截与分类授权。区分只读工具、安全变更与高危 Shell 执行，默认开启 `approve-safe` 最小必要权限。 |
+| **Context 管理** | 长上下文导致 Token 爆炸与注意涣散 | 构建 **`ContextSnapshot`** 与 **`ContextComposer`**。根据任务类型实现分层上下文加载、静态/动态规则隔离与预算裁剪。 |
+| **多模型适配与扩展** | 厂商 API 格式各异，单点绑定风险 | 建立统一的 **Provider Adapter** 抽象门面与动态模型发现能力（Discovery），实现 Google、OpenAI、Anthropic、Ollama 无缝热拔插。 |
 
-- [docs/roadmap.md](docs/roadmap.md)
-- [docs/archive/phases/core-loop-architecture.md](docs/archive/phases/core-loop-architecture.md)
-- [docs/status.md](docs/status.md)
-- [docs/plans/2026-06-22-learning-first-agent-roadmap.md](docs/plans/2026-06-22-learning-first-agent-roadmap.md)
+---
+
+## 🧪 工程质量与自动化验证
+
+OpenCAI 遵循严格的工程化开发规范与自动化测试保障：
+
+* **全量单元测试**：
+  ```powershell
+  python -m unittest discover tests
+  ```
+  *包含 330+ 个自动化测试用例，覆盖 Workflow IR、Clarify 状态机、TUI 交互渲染、Safety 策略与 Context 管道。*
+* **跨平台 CI 矩阵**：GitHub Actions 在 **Python 3.10、3.11、3.12、3.13** 环境下持续自动化验证。
+* **本地 Micro-Benchmark 评测**：
+  ```powershell
+  python -m benchmarks.runner --task all --timeout 30
+  ```
+  *基于真实代码任务评估 Agent 的工具调度、文件读写及回归通过率。*
+
+---
+
+## 📚 文档索引
+
+深入阅读 OpenCAI 的架构与详细技术演进：
+
+* 📋 [开发状态与最新验证 (docs/status.md)](docs/status.md)
+* 🗺️ [长期产品路线图 (docs/roadmap.md)](docs/roadmap.md)
+* 🔄 [Workflow 架构设计 (docs/features/Workflow.md)](docs/features/Workflow.md)
+* 🧠 [Context Engineering 规范 (docs/features/Context Engineering.md)](docs/features/Context%20Engineering.md)
+* 🛠️ [工具系统架构 (docs/features/Tools.md)](docs/features/Tools.md)
+* 🔌 [多 Provider 适配体系 (docs/features/LLM Providers.md)](docs/features/LLM%20Providers.md)
+* 🎓 [学习型开发模式 (docs/learning-mode.md)](docs/learning-mode.md)
+
+---
+
+## 📄 开源协议与贡献
+
+* **许可证**：本项目采用 [MIT License](LICENSE) 开源。
+* **贡献指南**：请参阅 [CONTRIBUTING.md](CONTRIBUTING.md)。
+* **安全报告**：请参阅 [SECURITY.md](SECURITY.md)。

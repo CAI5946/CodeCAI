@@ -10,4 +10,5 @@ outputs/
 benchmarks/runs/
 benchmarks/results/
 .worktrees/
+.workbuddy/
 Note.md

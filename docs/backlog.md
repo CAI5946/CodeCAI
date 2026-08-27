@@ -1,0 +1,23 @@
+# Backlog
+
+- [ ] llm council：评审会（设计方案/技术方案）
+- [ ] 协同开发模式：AI 在执行中会对用户已经知道的信息进行重新分析（例如辨别歧义），其实可以通过简单提问来提高效率
+- [ ] TUI 弹窗默认选项高亮
+- [ ] 需求拆解（ex: 节省 Token）
+- [ ] Guided mode：clarify 规则是否长久注入
+- [ ] 网络超时
+- [ ] 换行
+- [ ] 修改默认 setup（权限）
+- [ ] Statusline 更新
+- [ ] 如何保持文档精简
+- [ ] Memory
+- [ ] WebUI
+- [ ] 多 mode（learn mode / dev mode）
+- [ ] Debug mode：显示全部信息
+- [ ] stream outputs
+- [ ] 小领域专精
+- [ ] 缓存命中
+- [ ] goal 原理
+- [ ] todo
+- [ ] loop
+- [ ] 执行内存释放
