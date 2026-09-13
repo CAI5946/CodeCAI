@@ -2,7 +2,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from OpenCAI.tools import TOOLS, run_tool
+from CodeCAI.tools import TOOLS, run_tool
 
 
 class SkillToolsTest(unittest.TestCase):

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.tooling.registry import DEFAULT_REGISTRY, ToolExposure, ToolRegistry
-from OpenCAI.tools import TOOLS
+from CodeCAI.tooling.registry import DEFAULT_REGISTRY, ToolExposure, ToolRegistry
+from CodeCAI.tools import TOOLS
 
 
 class ToolRegistryTests(unittest.TestCase):

@@ -248,7 +248,7 @@ class BenchmarkRunnerTests(unittest.TestCase):
         self.assertEqual("invalid_task", result["status"])
         self.assertEqual(0, result["initial_verification"]["exit_code"])
 
-    def test_build_agent_command_runs_opencai_inside_task_workspace(self) -> None:
+    def test_build_agent_command_runs_codecai_inside_task_workspace(self) -> None:
         task = BenchmarkTask(
             id="workspace_task",
             title="Workspace task",

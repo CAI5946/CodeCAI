@@ -1,7 +1,7 @@
 import unittest
 
-from OpenCAI.events import Event, final_answer, make_event, stop, user_task
-from OpenCAI.workflow import (
+from CodeCAI.events import Event, final_answer, make_event, stop, user_task
+from CodeCAI.workflow import (
     SerialWorkflowRunner,
     WorkflowPhase,
     WorkflowPlan,

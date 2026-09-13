@@ -1,1 +1,1 @@
-"""Benchmark harness for OpenCAI local evaluation tasks."""
+"""Benchmark harness for CodeCAI local evaluation tasks."""

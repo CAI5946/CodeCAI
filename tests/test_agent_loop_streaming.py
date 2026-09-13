@@ -3,10 +3,10 @@ from __future__ import annotations
 import inspect
 import unittest
 
-import OpenCAI.agent_loop as agent_loop_module
-from OpenCAI.agent_loop import iter_agent_loop, run_agent_loop
-from OpenCAI.llm_adapter import FakeLLMAdapter, Message, ModelOutput
-from OpenCAI.tools import ToolSpec
+import CodeCAI.agent_loop as agent_loop_module
+from CodeCAI.agent_loop import iter_agent_loop, run_agent_loop
+from CodeCAI.llm_adapter import FakeLLMAdapter, Message, ModelOutput
+from CodeCAI.tools import ToolSpec
 
 
 class RecordingFinalAnswerAdapter:

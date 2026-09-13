@@ -3,11 +3,11 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
-from OpenCAI.__main__ import build_adapter
-from OpenCAI.adapter_factory import AdapterFactory, profile_from_adapter_name
-from OpenCAI.llm_adapter import FakeLLMAdapter, LLMAdapterError
-from OpenCAI.model_registry import ModelProfile
-from OpenCAI.provider_adapters import AnthropicAdapter, OllamaAdapter, OpenAICompatibleAdapter
+from CodeCAI.__main__ import build_adapter
+from CodeCAI.adapter_factory import AdapterFactory, profile_from_adapter_name
+from CodeCAI.llm_adapter import FakeLLMAdapter, LLMAdapterError
+from CodeCAI.model_registry import ModelProfile
+from CodeCAI.provider_adapters import AnthropicAdapter, OllamaAdapter, OpenAICompatibleAdapter
 
 
 class AdapterFactoryTests(unittest.TestCase):
@@ -26,7 +26,7 @@ class AdapterFactoryTests(unittest.TestCase):
             model="gemini-2.5-pro",
         )
 
-        with patch("OpenCAI.adapter_factory.GeminiAdapter") as gemini_adapter:
+        with patch("CodeCAI.adapter_factory.GeminiAdapter") as gemini_adapter:
             adapter = AdapterFactory().build(profile, api_key="secret")
 
         self.assertIs(adapter, gemini_adapter.return_value)
@@ -39,7 +39,7 @@ class AdapterFactoryTests(unittest.TestCase):
             model="gemini-dynamic",
         )
 
-        with patch("OpenCAI.adapter_factory.GeminiAdapter") as gemini_adapter:
+        with patch("CodeCAI.adapter_factory.GeminiAdapter") as gemini_adapter:
             adapter = AdapterFactory().build(profile, api_key="secret")
 
         self.assertIs(adapter, gemini_adapter.return_value)

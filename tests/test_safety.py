@@ -2,8 +2,8 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from OpenCAI.safety import PermissionProfile, SafetyPolicy
-from OpenCAI.tools import TOOLS
+from CodeCAI.safety import PermissionProfile, SafetyPolicy
+from CodeCAI.tools import TOOLS
 
 
 class SafetyPolicyTest(unittest.TestCase):

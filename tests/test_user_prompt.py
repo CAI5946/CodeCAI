@@ -3,8 +3,8 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
-from OpenCAI.tui import ask_user_prompt
-from OpenCAI.user_prompt import UserPromptOption, UserPromptRequest, UserPromptResult
+from CodeCAI.tui import ask_user_prompt
+from CodeCAI.user_prompt import UserPromptOption, UserPromptRequest, UserPromptResult
 
 
 class UserPromptTests(unittest.TestCase):
@@ -30,8 +30,8 @@ class UserPromptTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.tui.sys.stdin.isatty", return_value=True),
-            patch("OpenCAI.tui.ask_select", return_value="execute") as select,
+            patch("CodeCAI.tui.sys.stdin.isatty", return_value=True),
+            patch("CodeCAI.tui.ask_select", return_value="execute") as select,
         ):
             result = ask_user_prompt(request)
 
@@ -61,13 +61,13 @@ class UserPromptTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.tui.sys.stdin.isatty", return_value=True),
-            patch("OpenCAI.tui.ask_select", return_value="revise"),
+            patch("CodeCAI.tui.sys.stdin.isatty", return_value=True),
+            patch("CodeCAI.tui.ask_select", return_value="revise"),
             patch(
-                "OpenCAI.tui.ask_user_prompt_text",
+                "CodeCAI.tui.ask_user_prompt_text",
                 return_value=UserPromptResult(custom_answer="Only update README."),
             ) as ask_text,
-            patch("OpenCAI.tui.ask_task") as ask_task,
+            patch("CodeCAI.tui.ask_task") as ask_task,
         ):
             result = ask_user_prompt(request)
 
@@ -96,8 +96,8 @@ class UserPromptTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.tui.sys.stdin.isatty", return_value=True),
-            patch("OpenCAI.tui.ask_select", return_value=None),
+            patch("CodeCAI.tui.sys.stdin.isatty", return_value=True),
+            patch("CodeCAI.tui.ask_select", return_value=None),
         ):
             result = ask_user_prompt(request)
 
@@ -121,10 +121,10 @@ class UserPromptTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.tui.sys.stdin.isatty", return_value=True),
-            patch("OpenCAI.tui.ask_select", return_value="custom"),
+            patch("CodeCAI.tui.sys.stdin.isatty", return_value=True),
+            patch("CodeCAI.tui.ask_select", return_value="custom"),
             patch(
-                "OpenCAI.tui.ask_user_prompt_text",
+                "CodeCAI.tui.ask_user_prompt_text",
                 return_value=UserPromptResult(cancelled=True),
             ),
         ):

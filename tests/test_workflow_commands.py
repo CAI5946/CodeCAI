@@ -7,11 +7,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from unittest.mock import patch
 
-from OpenCAI.llm_adapter import FakeLLMAdapter, LLMAdapter
-from OpenCAI.safety import PermissionProfile, SafetyPolicy
-from OpenCAI.workflow import build_inspect_handoff_workflow_plan
-from OpenCAI.workflow.clarify import ClarifyResult, ClarifyRun
-from OpenCAI.workflow.commands import handle_workflow_command
+from CodeCAI.llm_adapter import FakeLLMAdapter, LLMAdapter
+from CodeCAI.safety import PermissionProfile, SafetyPolicy
+from CodeCAI.workflow import build_inspect_handoff_workflow_plan
+from CodeCAI.workflow.clarify import ClarifyResult, ClarifyRun
+from CodeCAI.workflow.commands import handle_workflow_command
 
 
 @dataclass
@@ -30,7 +30,7 @@ class WorkflowCommandTests(unittest.TestCase):
         session = DummySession(cwd=Path.cwd(), adapter=FakeLLMAdapter())
         output = io.StringIO()
 
-        with redirect_stdout(output), patch("OpenCAI.workflow.commands.SerialWorkflowRunner") as runner:
+        with redirect_stdout(output), patch("CodeCAI.workflow.commands.SerialWorkflowRunner") as runner:
             handle_workflow_command(session, "")
 
         self.assertIn("No task for workflow. Usage: /workflow TASK", output.getvalue())
@@ -53,7 +53,7 @@ class WorkflowCommandTests(unittest.TestCase):
     def test_workflow_command_compiles_spec_before_running(self) -> None:
         session = DummySession(cwd=Path.cwd(), adapter=FakeLLMAdapter())
 
-        with patch("OpenCAI.workflow.commands.compile_workflow") as compile_workflow:
+        with patch("CodeCAI.workflow.commands.compile_workflow") as compile_workflow:
             compile_workflow.return_value = build_inspect_handoff_workflow_plan()
             with redirect_stdout(io.StringIO()):
                 handle_workflow_command(session, "Read README")
@@ -72,9 +72,9 @@ class WorkflowCommandTests(unittest.TestCase):
         output = io.StringIO()
 
         with (
-            patch("OpenCAI.workflow.commands.run_clarify_for_session", return_value=blocked_run),
-            patch("OpenCAI.workflow.commands.compile_workflow") as compile_workflow,
-            patch("OpenCAI.workflow.commands.SerialWorkflowRunner") as runner,
+            patch("CodeCAI.workflow.commands.run_clarify_for_session", return_value=blocked_run),
+            patch("CodeCAI.workflow.commands.compile_workflow") as compile_workflow,
+            patch("CodeCAI.workflow.commands.SerialWorkflowRunner") as runner,
             redirect_stdout(output),
         ):
             handle_workflow_command(session, "Read README")

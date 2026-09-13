@@ -3,8 +3,8 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-from OpenCAI.safety import SafetyPolicy
-from OpenCAI.shell_mode import run_user_shell_command
+from CodeCAI.safety import SafetyPolicy
+from CodeCAI.shell_mode import run_user_shell_command
 
 
 class ShellModeTests(unittest.TestCase):

@@ -2,7 +2,7 @@
 
 ## Feature 目标
 
-Context Engineering 负责管理 OpenCAI 在不同执行点提供给模型的上下文。它不是传统 RAG 的同义词，也不是把所有历史、日志和文件内容直接塞进 prompt；它是 Runtime、Agent Loop、WorkflowRunner、Modes、Multi-agents 和 Memory 之间的输入合同。
+Context Engineering 负责管理 CodeCAI 在不同执行点提供给模型的上下文。它不是传统 RAG 的同义词，也不是把所有历史、日志和文件内容直接塞进 prompt；它是 Runtime、Agent Loop、WorkflowRunner、Modes、Multi-agents 和 Memory 之间的输入合同。
 
 核心目标：
 
@@ -48,22 +48,22 @@ current user task
 
 ## 当前代码结构
 
-- `OpenCAI/context.py`
+- `CodeCAI/context.py`
   - `ContextSnapshot`：一次 context 采集结果。
   - `ContextProvider`：采集 cwd、repo root、git、runtime、global/project `AGENTS.md`。
   - `ContextComposer`：把 system prompt、项目规则、全局规则、环境信息、session context 和当前 task 组合成 LLM messages。
 
-- `OpenCAI/session_context.py`
+- `CodeCAI/session_context.py`
   - `SessionContext`：RuntimeSession 内的模型可见长期对话上下文。
   - `SessionTurnSummary`：单个 user turn 的精简摘要。
   - `summarize_turn_events()`：从 transcript events 提取 user task、final answer、tool calls、verification 和 error/stop 信息。
 
-- `OpenCAI/agent_loop.py`
+- `CodeCAI/agent_loop.py`
   - `iter_agent_loop()`：单个 task 内的 model -> tool -> observation 循环。
   - 内部 `messages` 是 in-turn 短期工作上下文，初始值来自 `ContextComposer`。
   - tool call 后追加 assistant tool-call message，tool 执行后追加 observation message，供下一轮模型调用使用。
 
-- `OpenCAI/__main__.py`
+- `CodeCAI/__main__.py`
   - `RuntimeSession.session_context` 保存当前交互式 session 的长期对话 context。
   - `run_once()` 接收可选 `session_context` 并传给 `ContextComposer`。
   - `run_interactive()` 每轮普通 task 完成后，将 events 摘要写回 `session.session_context`。
@@ -128,7 +128,7 @@ current user task
 最近验证：
 
 - `python -m unittest tests.test_session_context tests.test_context tests.test_runtime_session`
-- `python -m py_compile OpenCAI\session_context.py OpenCAI\context.py OpenCAI\__main__.py tests\test_session_context.py tests\test_context.py tests\test_runtime_session.py`
+- `python -m py_compile CodeCAI\session_context.py CodeCAI\context.py CodeCAI\__main__.py tests\test_session_context.py tests\test_context.py tests\test_runtime_session.py`
 - `python -m unittest discover tests`
 
 ## 待完成工作

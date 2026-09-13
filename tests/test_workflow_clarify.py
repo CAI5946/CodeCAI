@@ -6,9 +6,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from OpenCAI.llm_adapter import Message, ModelOutput
-from OpenCAI.tools import ToolSpec
-from OpenCAI.workflow.clarify import (
+from CodeCAI.llm_adapter import Message, ModelOutput
+from CodeCAI.tools import ToolSpec
+from CodeCAI.workflow.clarify import (
     CLARIFY_CANCELLED_REASON,
     DEFAULT_MAX_CLARIFY_ROUNDS,
     ClarifyAnswer,
@@ -20,7 +20,7 @@ from OpenCAI.workflow.clarify import (
     LLMClarifyAgent,
     clarify_decision_from_json,
 )
-from OpenCAI.user_prompt import UserPromptOption, UserPromptResult
+from CodeCAI.user_prompt import UserPromptOption, UserPromptResult
 
 
 class StaticClarifyAgent:
@@ -119,14 +119,14 @@ class WorkflowClarifyTests(unittest.TestCase):
                 ClarifyDecision(type="complete", result=result),
             ]
         )
-        runner = ClarifyPhaseRunner(agent=agent, answer_provider=lambda question: "OpenCAI/workflow/core.py")
+        runner = ClarifyPhaseRunner(agent=agent, answer_provider=lambda question: "CodeCAI/workflow/core.py")
 
         run = runner.run("Fix bug", cwd=Path.cwd())
 
         self.assertEqual("complete", run.status)
         self.assertEqual(["Which file should be changed?"], [question.question for question in run.questions])
-        self.assertEqual(["OpenCAI/workflow/core.py"], run.answers)
-        self.assertEqual([[], ["OpenCAI/workflow/core.py"]], agent.calls)
+        self.assertEqual(["CodeCAI/workflow/core.py"], run.answers)
+        self.assertEqual([[], ["CodeCAI/workflow/core.py"]], agent.calls)
         self.assertEqual(result, run.result)
 
     def test_runner_uses_prompt_option_answer_for_choice_question(self) -> None:
@@ -164,7 +164,7 @@ class WorkflowClarifyTests(unittest.TestCase):
         runner = ClarifyPhaseRunner(agent=agent)
 
         with patch(
-            "OpenCAI.tui.ask_user_prompt",
+            "CodeCAI.tui.ask_user_prompt",
             return_value=UserPromptResult(
                 selected_option_id="readme",
                 selected_label="README only",
@@ -222,7 +222,7 @@ class WorkflowClarifyTests(unittest.TestCase):
         runner = ClarifyPhaseRunner(agent=agent)
 
         with patch(
-            "OpenCAI.tui.ask_user_prompt",
+            "CodeCAI.tui.ask_user_prompt",
             return_value=UserPromptResult(
                 selected_option_id="stop_clarify",
                 selected_label="Stop Clarify",
@@ -436,7 +436,7 @@ class WorkflowClarifyTests(unittest.TestCase):
         agent = LLMClarifyAgent(adapter=adapter, max_model_turns=3)
 
         decision = agent.decide(
-            "Compare OpenCAI workflow with Codex",
+            "Compare CodeCAI workflow with Codex",
             cwd=Path.cwd(),
             answers=[],
             repo_context_summary="repo does not contain current Codex docs",
@@ -473,7 +473,7 @@ class WorkflowClarifyTests(unittest.TestCase):
                                 "refined_task": "Fix the clarify JSON retry path.",
                                 "acceptance_criteria": ["Invalid clarify JSON is retried."],
                                 "constraints": [],
-                                "allowed_changes": ["OpenCAI/workflow/clarify.py"],
+                                "allowed_changes": ["CodeCAI/workflow/clarify.py"],
                                 "out_of_scope": [],
                                 "assumptions": [],
                                 "risks": [],

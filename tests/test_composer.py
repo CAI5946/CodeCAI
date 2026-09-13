@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.composer import (
+from CodeCAI.composer import (
     ComposerState,
     RuntimeCommandInput,
     ShellInput,

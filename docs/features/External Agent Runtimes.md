@@ -8,19 +8,19 @@
 
 ## Feature 目标
 
-OpenCAI 可以把 Codex CLI、Claude Code CLI、AGY CLI 或其他完整 Agent harness 作为 Workflow 中的节点 Agent 调用，而不是把这些 Agent 当成普通 LLM Provider。
+CodeCAI 可以把 Codex CLI、Claude Code CLI、AGY CLI 或其他完整 Agent harness 作为 Workflow 中的节点 Agent 调用，而不是把这些 Agent 当成普通 LLM Provider。
 
-外部 Agent Runtime 负责完成单个节点内部的代码理解、工具调用、文件修改和验证闭环；OpenCAI 继续持有 Workflow 的计划、顺序、状态、失败恢复和最终 handoff。
+外部 Agent Runtime 负责完成单个节点内部的代码理解、工具调用、文件修改和验证闭环；CodeCAI 继续持有 Workflow 的计划、顺序、状态、失败恢复和最终 handoff。
 
 ```text
-OpenCAI Workflow
+CodeCAI Workflow
   -> 决定何时执行哪个节点、节点之间传递什么、失败后走向哪里
 
 External Agent Runtime
   -> 完成当前节点内部的 agent loop 和真实工具执行
 ```
 
-该能力的价值不是简单转发用户输入，而是让 OpenCAI 在复用成熟 Agent 执行能力的同时，提供稳定流程、结构化状态、独立 review、验证门槛和 retry。
+该能力的价值不是简单转发用户输入，而是让 CodeCAI 在复用成熟 Agent 执行能力的同时，提供稳定流程、结构化状态、独立 review、验证门槛和 retry。
 
 ## 核心边界
 
@@ -38,15 +38,15 @@ External Agent Runtime
   -> 输出事件流、文件变更、验证证据和最终结果
 ```
 
-如果把 Codex、Claude Code 等完整 Agent 塞进 `LLMAdapter.call()`，OpenCAI 会出现双重 Agent Loop、双重 Tool Model 和双重权限判断。因此，外部 Agent 必须通过独立的 runtime / executor 抽象接入。
+如果把 Codex、Claude Code 等完整 Agent 塞进 `LLMAdapter.call()`，CodeCAI 会出现双重 Agent Loop、双重 Tool Model 和双重权限判断。因此，外部 Agent 必须通过独立的 runtime / executor 抽象接入。
 
 ## 接入形态
 
-不同 Agent 可以暴露不同接口，OpenCAI 不应把实现限定为某一条 CLI 命令。
+不同 Agent 可以暴露不同接口，CodeCAI 不应把实现限定为某一条 CLI 命令。
 
 ### One-shot CLI
 
-OpenCAI 启动一次性子进程，传入任务，并读取 stdout 中的文本或 JSONL 事件。
+CodeCAI 启动一次性子进程，传入任务，并读取 stdout 中的文本或 JSONL 事件。
 
 ```text
 spawn command
@@ -61,7 +61,7 @@ spawn command
 
 ### Long-lived Protocol Server
 
-OpenCAI 启动长期运行的 Agent 服务，通过 stdio、WebSocket 或其他 transport 交换结构化请求、响应和事件。
+CodeCAI 启动长期运行的 Agent 服务，通过 stdio、WebSocket 或其他 transport 交换结构化请求、响应和事件。
 
 候选协议包括 Codex app-server JSON-RPC、Agent Client Protocol，以及其他 Agent 提供的等价协议。
 
@@ -83,7 +83,7 @@ start server process
 
 ### Native TUI / PTY
 
-OpenCAI 可以在 PTY 中启动 Agent 原生 TUI，并镜像终端输入输出。该形态适合保留原生交互体验，但结构化事件、状态恢复和自动化控制通常弱于正式协议，因此不作为 Workflow 自动编排的首选接口。
+CodeCAI 可以在 PTY 中启动 Agent 原生 TUI，并镜像终端输入输出。该形态适合保留原生交互体验，但结构化事件、状态恢复和自动化控制通常弱于正式协议，因此不作为 Workflow 自动编排的首选接口。
 
 ## 核心架构
 
@@ -93,7 +93,7 @@ OpenCAI 可以在 PTY 中启动 Agent 原生 TUI，并镜像终端输入输出�
 WorkflowRunner
   -> AgentDispatcher
       -> AgentRuntimeRegistry
-          -> OpenCAIRuntimeAdapter
+          -> CodeCAIRuntimeAdapter
           -> CodexRuntimeAdapter
           -> ClaudeRuntimeAdapter
           -> AgyRuntimeAdapter
@@ -164,13 +164,13 @@ User Task
   -> AgentRuntimeAdapter executes external Agent
   -> native events
   -> RuntimeEventNormalizer
-  -> OpenCAI node events
+  -> CodeCAI node events
   -> NodeExecutionResult
   -> WorkflowRun ledger
   -> branch / retry / review / verify / handoff
 ```
 
-外部 Agent 的原生事件不能直接成为 Workflow 的事实模型。Runtime Adapter 必须先转换为 OpenCAI 可以稳定消费的事件，例如：
+外部 Agent 的原生事件不能直接成为 Workflow 的事实模型。Runtime Adapter 必须先转换为 CodeCAI 可以稳定消费的事件，例如：
 
 ```text
 session_started
@@ -188,14 +188,14 @@ node_completed
 node_failed
 ```
 
-OpenCAI 可以保存必要的原生 payload 用于诊断，但 Workflow 状态判断只依赖规范化字段。
+CodeCAI 可以保存必要的原生 payload 用于诊断，但 Workflow 状态判断只依赖规范化字段。
 
 ## Session 映射
 
-OpenCAI session、WorkflowRun 和外部 Agent session 是不同对象。
+CodeCAI session、WorkflowRun 和外部 Agent session 是不同对象。
 
 ```text
-OpenCAI RuntimeSession
+CodeCAI RuntimeSession
   -> 可以包含多个 WorkflowRun
 
 WorkflowRun
@@ -205,7 +205,7 @@ Node Agent
   -> 可以创建或恢复一个外部 Agent session / thread
 ```
 
-OpenCAI 需要持久化最小映射：
+CodeCAI 需要持久化最小映射：
 
 ```text
 workflow_run_id + node_id + runtime_id
@@ -216,7 +216,7 @@ workflow_run_id + node_id + runtime_id
 
 ## Context 所有权
 
-OpenCAI 负责提供 workflow-scoped context：
+CodeCAI 负责提供 workflow-scoped context：
 
 - 原始任务。
 - 当前 phase、role 和节点 instruction。
@@ -231,17 +231,17 @@ OpenCAI 负责提供 workflow-scoped context：
 - Agent 自己的 skills、plugins、MCP 和工具配置。
 - Agent session 内部的历史消息。
 
-OpenCAI 不应默认把完整 system prompt、全部 AGENTS 内容或所有历史节点结果再次拼进外部 Agent prompt。重复注入会造成指令冲突、token 浪费和事实来源不清。
+CodeCAI 不应默认把完整 system prompt、全部 AGENTS 内容或所有历史节点结果再次拼进外部 Agent prompt。重复注入会造成指令冲突、token 浪费和事实来源不清。
 
 ## Tool 与权限所有权
 
 节点必须明确选择唯一的实际工具执行方。
 
 ```text
-OpenCAI-native node
-  -> OpenCAI Agent Loop
-  -> OpenCAI Tool Registry
-  -> OpenCAI SafetyPolicy
+CodeCAI-native node
+  -> CodeCAI Agent Loop
+  -> CodeCAI Tool Registry
+  -> CodeCAI SafetyPolicy
 
 External-Agent node
   -> External Agent Loop
@@ -249,9 +249,9 @@ External-Agent node
   -> External Agent sandbox / approval protocol
 ```
 
-OpenCAI 对外部节点仍负责设置权限上限、cwd、可写 workspace roots、timeout、并发限制和 cancel；但不能把外部 Agent 内部未暴露的工具调用描述为已经经过 OpenCAI `SafetyPolicy` 的逐次裁决。
+CodeCAI 对外部节点仍负责设置权限上限、cwd、可写 workspace roots、timeout、并发限制和 cancel；但不能把外部 Agent 内部未暴露的工具调用描述为已经经过 CodeCAI `SafetyPolicy` 的逐次裁决。
 
-如果 OpenCAI permission profile 无法等价映射到目标 Agent，adapter 必须明确拒绝、降级或要求 human approval，不能静默扩大权限。
+如果 CodeCAI permission profile 无法等价映射到目标 Agent，adapter 必须明确拒绝、降级或要求 human approval，不能静默扩大权限。
 
 ## Runtime 能力声明
 
@@ -312,15 +312,15 @@ Runtime Adapter 至少需要区分：
 
 ## 当前状态
 
-- OpenCAI 当前没有 `AgentRuntimeAdapter`、`AgentDispatcher` 或外部 Agent session 映射。
-- 当前 `SerialWorkflowRunner` 仍直接调用 OpenCAI `run_agent_loop()`。
-- Codex、Claude、AGY 和其他 Agent 均未在 OpenCAI 中实现或验证。
+- CodeCAI 当前没有 `AgentRuntimeAdapter`、`AgentDispatcher` 或外部 Agent session 映射。
+- 当前 `SerialWorkflowRunner` 仍直接调用 CodeCAI `run_agent_loop()`。
+- Codex、Claude、AGY 和其他 Agent 均未在 CodeCAI 中实现或验证。
 - 本文只定义候选架构和边界，不代表已选择首个 runtime，也不代表任何外部 Agent 已受支持。
 
 ## 非目标
 
 - 不把外部 Agent 当作普通 `LLMAdapter`。
-- 不让外部 Agent 接管 OpenCAI 的 Workflow control plane。
+- 不让外部 Agent 接管 CodeCAI 的 Workflow control plane。
 - 不要求所有 Agent 使用同一种 transport。
 - 不在第一步统一所有外部 Agent 的完整原生功能。
 - 不默认允许多个写入型 Agent 并行操作同一个 workspace。

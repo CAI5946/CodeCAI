@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.workflow import WorkflowPlan, build_inspect_handoff_workflow_plan
-from OpenCAI.workflow.clarify import DEFAULT_MAX_CLARIFY_ROUNDS
-from OpenCAI.workflow.commands import handle_workflow_command
-from OpenCAI.workflow.planner import compile_workflow
-from OpenCAI.workflow.runner import SerialWorkflowRunner
+from CodeCAI.workflow import WorkflowPlan, build_inspect_handoff_workflow_plan
+from CodeCAI.workflow.clarify import DEFAULT_MAX_CLARIFY_ROUNDS
+from CodeCAI.workflow.commands import handle_workflow_command
+from CodeCAI.workflow.planner import compile_workflow
+from CodeCAI.workflow.runner import SerialWorkflowRunner
 
 
 class WorkflowPackageTests(unittest.TestCase):

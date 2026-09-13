@@ -2,7 +2,7 @@
 
 ## 目标
 
-让 OpenCAI 在小型真实开发任务上接近主流 Coding Agent 的基础执行效果：读上下文、定位问题、改文件、运行验证、根据失败继续迭代，并留下可审计结果。
+让 CodeCAI 在小型真实开发任务上接近主流 Coding Agent 的基础执行效果：读上下文、定位问题、改文件、运行验证、根据失败继续迭代，并留下可审计结果。
 
 这个目标是产品验收目标，不是单一 feature。Workflow、Tool Model、Agent Loop Strategy、Modes 和后续 Multi-agent 都只作为提高通过率的手段。
 
@@ -10,7 +10,7 @@
 
 ### Level 1: Local Micro Tasks
 
-本地小任务，专门测试 OpenCAI 自身闭环。
+本地小任务，专门测试 CodeCAI 自身闭环。
 
 - bugfix：先复现失败测试，再最小修改并重跑测试。
 - CLI feature：给已有小 CLI 增加一个参数并保持旧行为。
@@ -56,9 +56,9 @@ python -m benchmarks.runner --task all --adapter gemini
 
 ## 评分
 
-- `passed`：初始验证失败，OpenCAI 进程退出码为 0，最终验证命令退出码为 0，且改动文件精确匹配 `expected_changed_files`。
+- `passed`：初始验证失败，CodeCAI 进程退出码为 0，最终验证命令退出码为 0，且改动文件精确匹配 `expected_changed_files`。
 - `invalid_task`：初始验证已经通过，说明 fixture 没有暴露待修问题。
-- `failed_agent`：OpenCAI 进程失败。
+- `failed_agent`：CodeCAI 进程失败。
 - `failed_verification`：Agent 运行结束后最终验证仍失败。
 - `failed_changed_files`：最终验证通过，但实际改动文件不符合 task contract。
 

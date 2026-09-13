@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.llm_adapter import GeminiAdapter
+from CodeCAI.llm_adapter import GeminiAdapter
 
 
 class GeminiAdapterContextTests(unittest.TestCase):

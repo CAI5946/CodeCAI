@@ -7,14 +7,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from unittest.mock import patch
 
-from OpenCAI.demand import DEFAULT_SUCCESS_CRITERION_ASSUMPTION, DemandBrief
-from OpenCAI.events import Event, final_answer, user_task
-from OpenCAI.guided import demand_brief_from_clarify_result, render_guided_demand_brief, run_guided_task
-from OpenCAI.llm_adapter import FakeLLMAdapter
-from OpenCAI.safety import PermissionProfile, SafetyPolicy
-from OpenCAI.session_context import SessionContext
-from OpenCAI.user_prompt import UserPromptResult
-from OpenCAI.workflow.clarify import ClarifyResult, ClarifyRun
+from CodeCAI.demand import DEFAULT_SUCCESS_CRITERION_ASSUMPTION, DemandBrief
+from CodeCAI.events import Event, final_answer, user_task
+from CodeCAI.guided import demand_brief_from_clarify_result, render_guided_demand_brief, run_guided_task
+from CodeCAI.llm_adapter import FakeLLMAdapter
+from CodeCAI.safety import PermissionProfile, SafetyPolicy
+from CodeCAI.session_context import SessionContext
+from CodeCAI.user_prompt import UserPromptResult
+from CodeCAI.workflow.clarify import ClarifyResult, ClarifyRun
 
 
 @dataclass
@@ -90,7 +90,7 @@ class GuidedModeTests(unittest.TestCase):
             return [user_task(1, task), final_answer(2, "done")]
 
         with (
-            patch("OpenCAI.guided.run_clarify_for_session", return_value=clarify_run),
+            patch("CodeCAI.guided.run_clarify_for_session", return_value=clarify_run),
             redirect_stdout(io.StringIO()) as output,
         ):
             events = run_guided_task(
@@ -119,7 +119,7 @@ class GuidedModeTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.guided.run_clarify_for_session", return_value=clarify_run) as clarify,
+            patch("CodeCAI.guided.run_clarify_for_session", return_value=clarify_run) as clarify,
             redirect_stdout(io.StringIO()),
         ):
             run_guided_task(
@@ -144,8 +144,8 @@ class GuidedModeTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.guided.run_clarify_for_session", return_value=clarify_run),
-            patch("OpenCAI.guided.sys.stdin.isatty", return_value=False),
+            patch("CodeCAI.guided.run_clarify_for_session", return_value=clarify_run),
+            patch("CodeCAI.guided.sys.stdin.isatty", return_value=False),
             redirect_stdout(io.StringIO()),
         ):
             events = run_guided_task(
@@ -166,7 +166,7 @@ class GuidedModeTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.guided.run_clarify_for_session", return_value=clarify_run),
+            patch("CodeCAI.guided.run_clarify_for_session", return_value=clarify_run),
             redirect_stdout(io.StringIO()) as output,
         ):
             events = run_guided_task(
@@ -212,7 +212,7 @@ class GuidedModeTests(unittest.TestCase):
             return [user_task(1, task), final_answer(2, "done")]
 
         with (
-            patch("OpenCAI.guided.run_clarify_for_session", side_effect=[first_run, second_run]) as clarify,
+            patch("CodeCAI.guided.run_clarify_for_session", side_effect=[first_run, second_run]) as clarify,
             redirect_stdout(io.StringIO()),
         ):
             events = run_guided_task(
@@ -271,9 +271,9 @@ class GuidedModeTests(unittest.TestCase):
         received: list[str] = []
 
         with (
-            patch("OpenCAI.guided.sys.stdin.isatty", return_value=True),
-            patch("OpenCAI.tui.ask_user_prompt", side_effect=lambda _request: next(prompt_results)),
-            patch("OpenCAI.guided.run_clarify_for_session", side_effect=[first_run, second_run]) as clarify,
+            patch("CodeCAI.guided.sys.stdin.isatty", return_value=True),
+            patch("CodeCAI.tui.ask_user_prompt", side_effect=lambda _request: next(prompt_results)),
+            patch("CodeCAI.guided.run_clarify_for_session", side_effect=[first_run, second_run]) as clarify,
             redirect_stdout(io.StringIO()),
         ):
             events = run_guided_task(
@@ -296,9 +296,9 @@ class GuidedModeTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.guided.sys.stdin.isatty", return_value=True),
-            patch("OpenCAI.tui.ask_user_prompt", return_value=UserPromptResult(cancelled=True)),
-            patch("OpenCAI.guided.run_clarify_for_session", return_value=clarify_run),
+            patch("CodeCAI.guided.sys.stdin.isatty", return_value=True),
+            patch("CodeCAI.tui.ask_user_prompt", return_value=UserPromptResult(cancelled=True)),
+            patch("CodeCAI.guided.run_clarify_for_session", return_value=clarify_run),
             redirect_stdout(io.StringIO()) as output,
         ):
             events = run_guided_task(
@@ -320,7 +320,7 @@ class GuidedModeTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.guided.run_clarify_for_session", return_value=clarify_run),
+            patch("CodeCAI.guided.run_clarify_for_session", return_value=clarify_run),
             redirect_stdout(io.StringIO()) as output,
         ):
             events = run_guided_task(
@@ -361,7 +361,7 @@ class GuidedModeTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.guided.run_clarify_for_session", return_value=clarify_run),
+            patch("CodeCAI.guided.run_clarify_for_session", return_value=clarify_run),
             redirect_stdout(io.StringIO()) as output,
         ):
             events = run_guided_task(

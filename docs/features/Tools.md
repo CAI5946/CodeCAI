@@ -2,9 +2,9 @@
 
 ## Feature 目标
 
-Tools 负责管理 OpenCAI 允许模型执行的真实动作。这个 feature 不从零发明工具体系，而是 reference-first：以 Claude Code 和 Codex 本地参考代码中的成熟工具设计为主要参考，再裁剪成 OpenCAI 当前阶段可以落地的版本。
+Tools 负责管理 CodeCAI 允许模型执行的真实动作。这个 feature 不从零发明工具体系，而是 reference-first：以 Claude Code 和 Codex 本地参考代码中的成熟工具设计为主要参考，再裁剪成 CodeCAI 当前阶段可以落地的版本。
 
-目标不是单纯增加工具数量，而是把 OpenCAI 的动作层设计成接近成熟 Coding Agent 的工具系统：
+目标不是单纯增加工具数量，而是把 CodeCAI 的动作层设计成接近成熟 Coding Agent 的工具系统：
 
 - 模型通过稳定、结构化、可审计、可控权限的工具完成开发任务。
 - 文件、搜索、编辑、命令、计划、workflow、MCP 和 subagent 能力都有清晰分类和扩展边界。
@@ -31,7 +31,7 @@ Claude 的价值主要在工具分类和用户工作流覆盖面。
 - IDE / LSP：language server integration。
 - Modes：plan mode、worktree mode、proactive/scheduled tools。
 
-OpenCAI 不需要一次性实现全部类别，但目标 taxonomy 应对齐这些成熟边界。
+CodeCAI 不需要一次性实现全部类别，但目标 taxonomy 应对齐这些成熟边界。
 
 ### Codex 参考点
 
@@ -49,9 +49,9 @@ Codex 的价值主要在工具架构机制。
 - observation / event 分层：工具输出给模型和展示给用户不是同一份原始数据。
 - multi-agent tools：spawn、message、wait、list 等协作工具有单独边界。
 
-OpenCAI 的 Tools 架构应优先复用这些机制的思想，而不是重新设计一套不同概念。
+CodeCAI 的 Tools 架构应优先复用这些机制的思想，而不是重新设计一套不同概念。
 
-## OpenCAI 目标工具分类
+## CodeCAI 目标工具分类
 
 成熟目标工具集按类别组织：
 
@@ -285,7 +285,7 @@ model output
 - workflow phase 很难精确 allowlist，例如 review phase 可以读文件但不该写文件。
 - transcript 和 benchmark 很难稳定归因。
 
-因此 OpenCAI 的原则是：
+因此 CodeCAI 的原则是：
 
 ```text
 command tool = 执行外部程序、验证、构建、诊断的通用工具
@@ -294,84 +294,84 @@ file/search/edit tools = 一等工具，不靠 shell 长期兜底
 
 ## 当前代码结构
 
-- `OpenCAI/tools.py`
+- `CodeCAI/tools.py`
   - 兼容门面，继续导出 `ToolSpec`、`ToolResult`、`TOOLS`、`run_tool()` 和既有工具函数。
   - 保持旧导入路径稳定，避免拆分工具实现时连带修改 Agent Loop、LLM Adapter、Safety 和测试。
 
-- `OpenCAI/tooling/contracts.py`
+- `CodeCAI/tooling/contracts.py`
   - `ToolCall`、`ToolSpec`、`ToolResult`、`ToolFunction`。
   - `tool_result()`：统一构造工具结果。
 
-- `OpenCAI/tooling/registry.py`
+- `CodeCAI/tooling/registry.py`
   - 聚合各分类模块导出的工具 spec。
   - `TOOLS`：当前静态工具注册表。
   - `run_tool()`：按工具名分发执行。
 
-- `OpenCAI/tooling/file_tools.py`
+- `CodeCAI/tooling/file_tools.py`
   - `read_file()`：读取 UTF-8 文本文件，支持 `max_chars` 预算。
   - `write_file()`：创建或覆盖完整 UTF-8 文件。
   - `delete_file()` / `copy_file()` / `move_file()`：结构化文件删除、复制和移动。
 
-- `OpenCAI/tooling/search_tools.py`
+- `CodeCAI/tooling/search_tools.py`
   - `list_files()`：结构化列目录。
   - `glob_files()`：按 glob 查找文件路径。
   - `search_files()`：优先封装 `rg`，支持 include / exclude / case sensitivity / max_results / max_bytes；无 `rg` 时回退 Python 搜索。
 
-- `OpenCAI/tooling/skill_tools.py`
+- `CodeCAI/tooling/skill_tools.py`
   - `list_skills()` / `read_skill()` / `invoke_skill()`：Skill 工具第一版；详细设计见 [Skills](Skills.md)。
 
-- `OpenCAI/tooling/web_tools.py`
+- `CodeCAI/tooling/web_tools.py`
   - `web_search()` / `web_fetch()` / `web_extract()`：Web / Research 工具第一版。
 
-- `OpenCAI/tooling/edit_tools.py`
+- `CodeCAI/tooling/edit_tools.py`
   - `edit_file()`：单文件局部替换。
   - `apply_patch()`：支持 `*** Begin Patch` add / update / delete multi-file grammar，并保留旧 `path/old/new` 兼容 schema。
 
-- `OpenCAI/tooling/planning_tools.py`
+- `CodeCAI/tooling/planning_tools.py`
   - `update_plan()`：维护多步骤 plan，最多一个 `in_progress`。
   - `create_task()` / `update_task()` / `list_tasks()` / `complete_task()`：当前 Python 进程内的轻量 task lifecycle。
 
-- `OpenCAI/tooling/context_tools.py`
+- `CodeCAI/tooling/context_tools.py`
   - `context_status()` / `read_context_block()` / `summarize_context()`：只读检查当前 repo / AGENTS / README / status / skill 摘要。
   - `search_memory()`：deferred persistent memory 边界，当前未配置 memory backend 时明确失败。
 
-- `OpenCAI/tooling/workflow_tools.py`
+- `CodeCAI/tooling/workflow_tools.py`
   - `workflow_plan()`：只读渲染当前内置 workflow plan。
   - `workflow_execute()` / `workflow_status()` / `workflow_pause()` / `workflow_resume()` / `workflow_cancel()` / `workflow_replay()`：deferred workflow control 边界，等待 RuntimeSession workflow controller 接入。
 
-- `OpenCAI/tooling/agent_tools.py`
+- `CodeCAI/tooling/agent_tools.py`
   - `spawn_agent()` / `send_agent_message()` / `wait_agent()` / `list_agents()` / `stop_agent()` / `merge_agent_result()`：deferred subagent runtime 边界。
 
-- `OpenCAI/tooling/code_intelligence_tools.py`
+- `CodeCAI/tooling/code_intelligence_tools.py`
   - `get_diagnostics()` / `go_to_definition()` / `find_references()` / `rename_symbol()` / `format_file()`：deferred IDE/LSP backend 边界。
 
-- `OpenCAI/tooling/command_tools.py`
+- `CodeCAI/tooling/command_tools.py`
   - `run_command()`：运行 shell 命令并返回 exit code、stdout、stderr。
 
-- `OpenCAI/tooling/external_tools.py`
+- `CodeCAI/tooling/external_tools.py`
   - `tool_search()` / `call_external_tool()` / `list_mcp_resources()` / `read_mcp_resource()`：deferred external/MCP 边界。当前注册为延迟暴露，并在未配置 runtime 时返回明确失败。
 
-- `OpenCAI/tooling/path_utils.py` / `OpenCAI/tooling/common.py`
+- `CodeCAI/tooling/path_utils.py` / `CodeCAI/tooling/common.py`
   - 分类工具共享的轻量 helper。
 
-- `OpenCAI/safety.py`
+- `CodeCAI/safety.py`
   - `SafetyPolicy`：工具执行前置权限检查。
   - 当前覆盖 path containment、permission profile、危险命令和只读边界。
 
-- `OpenCAI/agent_loop.py`
+- `CodeCAI/agent_loop.py`
   - `iter_agent_loop()`：单个 task 内消费工具 spec，执行工具，写入 events 和 observation messages。
   - `_format_observation()`：当前集中式 observation renderer。
   - `_verification_event_from_result()`：从 `run_command` 结果生成验证事件。
 
-- `OpenCAI/llm_adapter.py`
-  - `to_provider_tool_schema()` / `to_provider_tool_schemas()`：把 OpenCAI `ToolSpec` 转成 provider tool schema。
+- `CodeCAI/llm_adapter.py`
+  - `to_provider_tool_schema()` / `to_provider_tool_schemas()`：把 CodeCAI `ToolSpec` 转成 provider tool schema。
   - `GeminiAdapter`：把 tool call / function response 映射到 provider-independent message contract。
 
-- `OpenCAI/shell_mode.py`
+- `CodeCAI/shell_mode.py`
   - `!command` 用户直连 shell mode。
   - 复用 `run_command` 的执行能力，但它不是模型发起的 tool call。
 
-- `OpenCAI/workflow/core.py`
+- `CodeCAI/workflow/core.py`
   - 当前 WorkflowRunner 不直接执行工具。
   - Workflow phase 仍通过 Agent Loop 使用 Tool Model。
 
@@ -383,9 +383,9 @@ file/search/edit tools = 一等工具，不靠 shell 长期兜底
 
 - 静态 `TOOLS` 注册表。
 - `ToolRegistry` class：支持注册、查找和按 `direct` / `deferred` / `hidden` exposure、category、read_only 过滤。
-- `OpenCAI.tools` 兼容门面。
-- `OpenCAI.tooling` 分类模块：contracts / registry / file / search / web / skill / edit / planning / command / external。
-- `OpenCAI.tooling` 也包含 context / workflow / agent / code_intelligence 边界模块，确保 Tools.md taxonomy 中的成熟工具面都有注册点。
+- `CodeCAI.tools` 兼容门面。
+- `CodeCAI.tooling` 分类模块：contracts / registry / file / search / web / skill / edit / planning / command / external。
+- `CodeCAI.tooling` 也包含 context / workflow / agent / code_intelligence 边界模块，确保 Tools.md taxonomy 中的成熟工具面都有注册点。
 - `ToolSpec` 包含 name、description、input_schema、read_only、function、category、exposure。
 - `ToolResult` 包含 tool_name、ok、result、error。
 - LLM Adapter 可把 `ToolSpec` 转成 provider tool schema。
@@ -431,7 +431,7 @@ file/search/edit tools = 一等工具，不靠 shell 长期兜底
   - 这是 skill discovery / inspection 的只读第一刀，不执行 skill 脚本。
 
 - `invoke_skill`
-  - 读取 project `.opencai/skills` 或 `~/AgentSkills` 中的 `SKILL.md`。
+  - 读取 project `.codecai/skills` 或 `~/AgentSkills` 中的 `SKILL.md`。
   - 返回摘要化 observation，并把完整 skill prompt 作为 `invoked_skill` meta user message 注入后续模型上下文。
   - 详细设计、边界和后续路线见 [Skills](Skills.md)。
 
@@ -648,7 +648,7 @@ file/search/edit tools = 一等工具，不靠 shell 长期兜底
 后续补：
 
 - Skill 后续路线已拆到 [Skills](Skills.md)。
-- MCP tool spec 到 OpenCAI `ToolSpec` 的 adapter。
+- MCP tool spec 到 CodeCAI `ToolSpec` 的 adapter。
 - MCP resource list / read。
 - dynamic tool loading 的来源、权限、审计和禁用机制。
 - `tool_search` 作为 deferred tool discovery 入口。
@@ -665,11 +665,11 @@ file/search/edit tools = 一等工具，不靠 shell 长期兜底
 
 ## 当前边界
 
-- Tools 是 OpenCAI 唯一真实动作层。
+- Tools 是 CodeCAI 唯一真实动作层。
 - Agent Loop 不直接读写文件，不直接执行 shell，只通过 Tool Model。
 - WorkflowRunner 不直接执行工具，只编排 phase。
 - TUI / Renderer 不承载工具决策逻辑。
-- `OpenCAI.tools` 是兼容门面；新增工具默认应放到 `OpenCAI/tooling/<category>_tools.py`，不要继续把实现塞回门面文件。
+- `CodeCAI.tools` 是兼容门面；新增工具默认应放到 `CodeCAI/tooling/<category>_tools.py`，不要继续把实现塞回门面文件。
 - `!command` 是用户直连 shell mode，不等于模型工具调用。
 - `run_command` 是 escape hatch，不是文件、搜索、编辑工具的长期替代品。
 - `apply_patch` 已支持 add / update / delete multi-file grammar，但还不是完整 Codex freeform patch parser，不支持 rename/move hunk、复杂上下文定位或冲突恢复。

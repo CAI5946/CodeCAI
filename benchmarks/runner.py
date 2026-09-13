@@ -155,7 +155,7 @@ def build_agent_command(task: BenchmarkTask, adapter: str, workspace: Path) -> l
     return [
         sys.executable,
         "-m",
-        "OpenCAI",
+        "CodeCAI",
         "--cwd",
         str(workspace),
         "--adapter",
@@ -267,7 +267,7 @@ def write_report(results: list[dict[str, Any]], results_dir: Path) -> Path:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run OpenCAI local benchmark tasks.")
+    parser = argparse.ArgumentParser(description="Run CodeCAI local benchmark tasks.")
     parser.add_argument("--task", default="all", help="Task id to run, or 'all'.")
     parser.add_argument("--adapter", choices=["fake", "gemini"], default="fake")
     parser.add_argument("--timeout", type=int, default=120, help="Timeout per command in seconds.")

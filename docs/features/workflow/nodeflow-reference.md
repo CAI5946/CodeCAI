@@ -35,7 +35,7 @@ nodeflow
 
 常见 phase 映射：
 
-| Nodeflow 概念 | OpenCAI Workflow 概念 |
+| Nodeflow 概念 | CodeCAI Workflow 概念 |
 | --- | --- |
 | `nodeflow` entry / router | workflow template selection / script selection |
 | `nodeflow-brainstorming` / `nodeflow-change-spec` | clarify / spec phase |
@@ -50,7 +50,7 @@ nodeflow
 | document_budget | workflow manifest / template policy |
 | retry_count / retry_history | WorkflowRun retry state |
 
-## 对 OpenCAI 的借鉴
+## 对 CodeCAI 的借鉴
 
 可直接吸收的设计：
 
@@ -65,7 +65,7 @@ nodeflow
 
 ## 不直接采用
 
-OpenCAI 不应把 Nodeflow 作为 runtime dependency。
+CodeCAI 不应把 Nodeflow 作为 runtime dependency。
 
 不直接采用：
 
@@ -73,11 +73,11 @@ OpenCAI 不应把 Nodeflow 作为 runtime dependency。
 - 完整 Nodeflow skill graph。
 - 完整 document cleanup policy。
 - 完整 review matrix。
-- Nodeflow 的所有节点命名作为 OpenCAI phase。
+- Nodeflow 的所有节点命名作为 CodeCAI phase。
 
-## OpenCAI 设计结论
+## CodeCAI 设计结论
 
-Nodeflow 在 OpenCAI 中的定位：
+Nodeflow 在 CodeCAI 中的定位：
 
 ```text
 Nodeflow
@@ -87,11 +87,11 @@ Nodeflow
 Workflow Planner / Compiler
   -> 把 Nodeflow-style template 编译成 WorkflowScript + WorkflowSpec manifest
 
-OpenCAI Workflow Runtime
+CodeCAI Workflow Runtime
   -> 执行受限 workflow script
 
 Agent Loop
   -> 执行单个 task
 ```
 
-Nodeflow 提供流程经验和阶段策略，不成为 OpenCAI 的底层 runtime。
+Nodeflow 提供流程经验和阶段策略，不成为 CodeCAI 的底层 runtime。

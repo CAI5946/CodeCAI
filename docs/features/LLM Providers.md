@@ -2,9 +2,9 @@
 
 ## 当前状态
 
-OpenCAI 的普通 Agent Loop 仍只接收一个已选定的 `LLMAdapter`。多 provider / 多 model 的选择、注册和配置属于 Runtime 层，不下沉到 `agent_loop.py`。
+CodeCAI 的普通 Agent Loop 仍只接收一个已选定的 `LLMAdapter`。多 provider / 多 model 的选择、注册和配置属于 Runtime 层，不下沉到 `agent_loop.py`。
 
-默认启动只注册 `fake/fake`。真实 provider 不再内置任何硬编码 model；用户必须通过 `/model-add` 或 `.opencai/models.json` 配置后才能出现在 `/model` 选择器里。
+默认启动只注册 `fake/fake`。真实 provider 不再内置任何硬编码 model；用户必须通过 `/model-add` 或 `.codecai/models.json` 配置后才能出现在 `/model` 选择器里。
 
 ## 数据流
 
@@ -15,7 +15,7 @@ OpenCAI 的普通 Agent Loop 仍只接收一个已选定的 `LLMAdapter`。多 p
   -> discover models when provider supports it
   -> choose or enter model
   -> save .env key
-  -> save .opencai/models.json profile
+  -> save .codecai/models.json profile
   -> register profile in RuntimeSession.model_registry
 
 /model
@@ -44,7 +44,7 @@ OpenCAI 的普通 Agent Loop 仍只接收一个已选定的 `LLMAdapter`。多 p
 
 ## Provider 和 Adapter
 
-Provider 不等于 Adapter。Provider 表示用户配置的服务商或 endpoint；Adapter 表示 OpenCAI 到某类 API 协议的翻译器。多个 provider 可以复用同一个 adapter。
+Provider 不等于 Adapter。Provider 表示用户配置的服务商或 endpoint；Adapter 表示 CodeCAI 到某类 API 协议的翻译器。多个 provider 可以复用同一个 adapter。
 
 当前映射：
 
@@ -78,7 +78,7 @@ ollama            -> GET /api/tags
 
 ## Runtime Commands
 
-- `/model-add`：配置 provider、API key 和 model，写入 `.env` 与 `.opencai/models.json`。
+- `/model-add`：配置 provider、API key 和 model，写入 `.env` 与 `.codecai/models.json`。
 - `/model`：只显示当前已注册 profiles，不显示未配置的真实 provider 默认项。
 - `/model provider/model`：切换到已注册 profile。
 - `/model-test`：对当前 active profile 运行 no-tool smoke check。
@@ -86,11 +86,11 @@ ollama            -> GET /api/tags
 ## 文件边界
 
 - `.env`：保存 API key，例如 `OPENAI_API_KEY`、`GEMINI_API_KEY`、`GLM_API_KEY`。
-- `.opencai/models.json`：保存 provider / model / base_url / api_key_env，不保存真实 key。
-- `OpenCAI/model_discovery.py`：动态拉取 provider model list。
-- `OpenCAI/model_setup.py`：provider 默认 endpoint、key env 和 profile 构造。
-- `OpenCAI/adapter_factory.py`：把 `ModelProfile` 转成具体 `LLMAdapter`。
-- `OpenCAI/model_manager.py`：Runtime profile registry 和 lazy adapter cache。
+- `.codecai/models.json`：保存 provider / model / base_url / api_key_env，不保存真实 key。
+- `CodeCAI/model_discovery.py`：动态拉取 provider model list。
+- `CodeCAI/model_setup.py`：provider 默认 endpoint、key env 和 profile 构造。
+- `CodeCAI/adapter_factory.py`：把 `ModelProfile` 转成具体 `LLMAdapter`。
+- `CodeCAI/model_manager.py`：Runtime profile registry 和 lazy adapter cache。
 
 ## 后续
 

@@ -3,9 +3,9 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
-from OpenCAI.llm_adapter import LLMAdapterError, Message
-from OpenCAI.provider_adapters import AnthropicAdapter, OllamaAdapter, OpenAICompatibleAdapter, _post_json
-from OpenCAI.tools import ToolSpec
+from CodeCAI.llm_adapter import LLMAdapterError, Message
+from CodeCAI.provider_adapters import AnthropicAdapter, OllamaAdapter, OpenAICompatibleAdapter, _post_json
+from CodeCAI.tools import ToolSpec
 
 
 def noop_tool(arguments: dict[str, object], cwd: object) -> dict[str, object]:
@@ -147,7 +147,7 @@ class ProviderAdapterTests(unittest.TestCase):
             adapter.call([{"role": "user", "content": "hi"}], {})
 
     def test_post_json_wraps_timeout_error(self) -> None:
-        with patch("OpenCAI.provider_adapters.request.urlopen", side_effect=TimeoutError):
+        with patch("CodeCAI.provider_adapters.request.urlopen", side_effect=TimeoutError):
             with self.assertRaisesRegex(LLMAdapterError, "Provider request timed out"):
                 _post_json("https://example.test", {}, {})
 

@@ -4,11 +4,11 @@ import tempfile
 from pathlib import Path
 import unittest
 
-from OpenCAI.tooling.registry import ToolExposure
-from OpenCAI.agent_loop import run_agent_loop
-from OpenCAI.llm_adapter import Message, ModelOutput
-from OpenCAI.tools import ToolSpec
-from OpenCAI.tools import TOOLS, run_tool
+from CodeCAI.tooling.registry import ToolExposure
+from CodeCAI.agent_loop import run_agent_loop
+from CodeCAI.llm_adapter import Message, ModelOutput
+from CodeCAI.tools import ToolSpec
+from CodeCAI.tools import TOOLS, run_tool
 
 
 class CaptureToolsAdapter:

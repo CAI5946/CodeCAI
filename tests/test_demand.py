@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.demand import (
+from CodeCAI.demand import (
     DEFAULT_SUCCESS_CRITERION,
     DEFAULT_SUCCESS_CRITERION_ASSUMPTION,
     DemandBrief,

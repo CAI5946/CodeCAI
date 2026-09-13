@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.tooling.planning_tools import PLAN_STATE, TASK_STATE
-from OpenCAI.tools import run_tool
+from CodeCAI.tooling.planning_tools import PLAN_STATE, TASK_STATE
+from CodeCAI.tools import run_tool
 
 
 class PlanningToolsTests(unittest.TestCase):

@@ -8,12 +8,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from unittest.mock import patch
 
-from OpenCAI.llm_adapter import FakeLLMAdapter, LLMAdapter
-from OpenCAI.model_manager import ModelManager
-from OpenCAI.model_registry import ModelProfile, ModelRegistry
-from OpenCAI.events import Event, final_answer, user_task
-from OpenCAI.safety import PermissionProfile, SafetyPolicy
-from OpenCAI.runtime_commands import (
+from CodeCAI.llm_adapter import FakeLLMAdapter, LLMAdapter
+from CodeCAI.model_manager import ModelManager
+from CodeCAI.model_registry import ModelProfile, ModelRegistry
+from CodeCAI.events import Event, final_answer, user_task
+from CodeCAI.safety import PermissionProfile, SafetyPolicy
+from CodeCAI.runtime_commands import (
     handle_runtime_command,
     render_keymap_text,
     render_runtime_status,
@@ -191,7 +191,7 @@ class RuntimeCommandTests(unittest.TestCase):
         with redirect_stdout(output):
             handle_runtime_command(session, "/model gemini/gemini-2.5-flash", None, build_any_fake_adapter)
 
-        self.assertIn("OpenCAI adapter error: Missing GEMINI_API_KEY", output.getvalue())
+        self.assertIn("CodeCAI adapter error: Missing GEMINI_API_KEY", output.getvalue())
         self.assertEqual(session.adapter_name, "fake")
 
     def test_model_command_choice_provider_uses_registered_model_profiles(self) -> None:
@@ -281,7 +281,7 @@ class RuntimeCommandTests(unittest.TestCase):
             requested: list[tuple[tuple[str, ...], str | None]] = []
 
             with patch(
-                "OpenCAI.runtime_commands.list_provider_models",
+                "CodeCAI.runtime_commands.list_provider_models",
                 return_value=(type("Model", (), {"id": "deepseek-v4"})(),),
             ):
                 handle_runtime_command(
@@ -425,7 +425,7 @@ class RuntimeCommandTests(unittest.TestCase):
         session = DummySession(cwd=Path.cwd())
         output = io.StringIO()
 
-        with redirect_stdout(output), patch("OpenCAI.tui.sys.stdin.isatty", return_value=False):
+        with redirect_stdout(output), patch("CodeCAI.tui.sys.stdin.isatty", return_value=False):
             should_exit = handle_runtime_command(session, "/keymap", None, build_dummy_adapter)
 
         self.assertFalse(should_exit)
@@ -436,8 +436,8 @@ class RuntimeCommandTests(unittest.TestCase):
         session = DummySession(cwd=Path.cwd())
 
         with (
-            patch("OpenCAI.tui.sys.stdin.isatty", return_value=True),
-            patch("OpenCAI.tui.show_keymap_view") as show_keymap,
+            patch("CodeCAI.tui.sys.stdin.isatty", return_value=True),
+            patch("CodeCAI.tui.show_keymap_view") as show_keymap,
         ):
             should_exit = handle_runtime_command(session, "/keymap", None, build_dummy_adapter)
 
@@ -511,7 +511,7 @@ class RuntimeCommandTests(unittest.TestCase):
             last_task_events=[user_task(1, "Read README"), final_answer(2, "done")],
         )
 
-        with patch("OpenCAI.tui.show_process_view") as show_process:
+        with patch("CodeCAI.tui.show_process_view") as show_process:
             should_exit = handle_runtime_command(session, "/process", None, build_dummy_adapter)
 
         self.assertFalse(should_exit)

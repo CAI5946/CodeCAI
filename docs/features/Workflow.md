@@ -4,7 +4,7 @@
 
 Workflow 负责把标准开发流程提升为可确认、可观察、可恢复、可审计的 runtime control layer。
 
-OpenCAI Workflow 的产品定位是稳定开发流程 runtime，不是通用流程引擎，也不是 Claude Code 重型 workflow 的复刻。固定基础流程是为了让系统能针对 Coding Agent 的日常开发任务做深度优化：phase policy、scoped context、验证证据、失败恢复、过程显示和规范化 handoff。
+CodeCAI Workflow 的产品定位是稳定开发流程 runtime，不是通用流程引擎，也不是 Claude Code 重型 workflow 的复刻。固定基础流程是为了让系统能针对 Coding Agent 的日常开发任务做深度优化：phase policy、scoped context、验证证据、失败恢复、过程显示和规范化 handoff。
 
 目标不是让用户或模型表达任意 DAG，也不是把复杂流程塞进 `agent_loop.py`。Workflow 的长期目标是支撑成熟 Coding Agent 的稳定开发能力：
 
@@ -27,7 +27,7 @@ Workflow 的成功标准是提高开发任务稳定性，而不是提高流程�
   -> 让用户或模型表达任意节点、任意分支、任意并发
 ```
 
-OpenCAI 选择前者。Task graph、dependency 和 retry 是内部执行结构；用户主要心智应是稳定开发流程，而不是自定义流程平台。
+CodeCAI 选择前者。Task graph、dependency 和 retry 是内部执行结构；用户主要心智应是稳定开发流程，而不是自定义流程平台。
 
 固定基础 phase vocabulary：
 
@@ -43,7 +43,7 @@ clarify / plan / execute / review / verify / handoff
 
 Claude Code Dynamic Workflows 的关键点是：workflow runtime 执行 orchestration script；script 持有计划、中间状态和调度逻辑；具体读文件、改文件、运行命令仍由 agent / subagent 执行。
 
-OpenCAI 借鉴的原则：
+CodeCAI 借鉴的原则：
 
 - Workflow 是 control plane，不是工具执行层。
 - Workflow state 不等于聊天上下文；phase result 应结构化保存。
@@ -63,14 +63,14 @@ OpenCAI 借鉴的原则：
 
 NodeFlow 的价值是把真实开发任务拆成风险自适应的节点图，而不是所有任务都走同一条线性流程。
 
-OpenCAI 借鉴的原则：
+CodeCAI 借鉴的原则：
 
 - `clarify -> plan -> execute -> review -> verify -> handoff` 适合作为 bugfix / feature workflow 模板。
 - review / verify 失败可以回到 execute。
 - checkpoint 和 HITL 要区分：checkpoint 是阶段产物 review，HITL 是执行前或执行中必须由人判断/授权的事项。
 - 文档和状态记录应按任务价值生成，不是每次 workflow 都创建大量文件。
 
-NodeFlow 在 OpenCAI 里的定位不是 runtime dependency，而是 workflow template library 和 process policy source。
+NodeFlow 在 CodeCAI 里的定位不是 runtime dependency，而是 workflow template library 和 process policy source。
 
 ## 核心架构
 
@@ -158,7 +158,7 @@ Tool Model
 
 Workflow 的底层调度单位应是 task，而不是 phase。Phase 保留为语义、策略、展示、context 和 retry 的分组边界。
 
-OpenCAI Workflow 采用固定 phase taxonomy，不允许每个 workflow 随意自定义 phase 名称。固定 phase 集合为：
+CodeCAI Workflow 采用固定 phase taxonomy，不允许每个 workflow 随意自定义 phase 名称。固定 phase 集合为：
 
 ```text
 clarify / plan / execute / review / verify / handoff
@@ -272,7 +272,7 @@ PhaseResult(execute)
     "已完成实现、测试更新和验证。"
   artifacts:
     changed_files:
-      - OpenCAI/runtime_commands.py
+      - CodeCAI/runtime_commands.py
       - tests/test_runtime_commands.py
   verification:
     commands:
@@ -455,7 +455,7 @@ TaskContext
 
 当前已有 `WorkflowSpec`、`WorkflowPhase`、`WorkflowTask`、`WorkflowRun`、`TaskResult`、`PhaseResult` 和 `SerialWorkflowRunner`。Task 是唯一执行单位，phase 只作为语义、策略、展示和聚合分组。
 
-后续应避免把 OpenCAI 做成通用 WorkflowScript 平台。当前主表达应是 `WorkflowSpec + WorkflowScript`：Spec 是可审计合同，Script 是结构化受限 IR，Template 是经验来源而不是唯一表达。
+后续应避免把 CodeCAI 做成通用 WorkflowScript 平台。当前主表达应是 `WorkflowSpec + WorkflowScript`：Spec 是可审计合同，Script 是结构化受限 IR，Template 是经验来源而不是唯一表达。
 ```
 
 ### D. Workflow Runner
@@ -609,13 +609,13 @@ WorkflowScript 不能：
 - 绕过 Agent Loop、Tool Model 或 SafetyPolicy。
 - 用自然语言感觉判断 branch / retry，例如“输出看起来不完整”。
 
-Script 的用途是表达开发流程内的受限动态控制，而不是让 OpenCAI 变成通用流程引擎。branch / retry 只能基于结构化状态，例如 task status、phase status、verification status、review finding、retry count 或 humancheck decision。
+Script 的用途是表达开发流程内的受限动态控制，而不是让 CodeCAI 变成通用流程引擎。branch / retry 只能基于结构化状态，例如 task status、phase status、verification status、review finding、retry count 或 humancheck decision。
 
 ## 当前实现
 
 已完成第一组可运行切片：
 
-- `OpenCAI/workflow/core.py`
+- `CodeCAI/workflow/core.py`
   - 定义 `WorkflowSpec`、`WorkflowPhase`、`WorkflowTask`、`WorkflowRun`、`TaskResult` 和 `PhaseResult`。
   - 定义 `WorkflowScriptOp`、`WorkflowScript` 和 `WorkflowPlan`，当前 Script IR V1 支持 `run_phase` / `handoff` / `stop`。
   - 实现 `SerialWorkflowRunner`。
@@ -628,22 +628,22 @@ Script 的用途是表达开发流程内的受限动态控制，而不是让 Ope
   - 支持 `final_phase_id` 显式收口。
   - 将 task `error` / `stop` / 缺少 final answer 映射为 failed。
 
-- `OpenCAI/runtime_commands.py`
+- `CodeCAI/runtime_commands.py`
   - 保留 `/workflow TASK` 兼容入口，并委托 `workflow.commands` 执行 workflow command flow。
 
-- `OpenCAI/composer.py`
+- `CodeCAI/composer.py`
   - `parse_user_input()` 已将 `/workflow TASK` 识别为结构化 `WorkflowCommandInput`。
   - 普通 slash command 继续识别为 `RuntimeCommandInput`。
 
-- `OpenCAI/workflow/planner.py`
+- `CodeCAI/workflow/planner.py`
   - `WorkflowPlanningAgent` 已作为 Planner Agent V1 边界。
   - 当前 `WorkflowPlanningAgent.plan(task)` 返回结构化 `WorkflowPlanDraft`，包含 `selected_template`、`rationale`、`phases`、`tasks`、`script_ops`、`assumptions` 和 `risks`。
   - `LLMWorkflowPlanningAgent` 可复用 `LLMAdapter` 生成 `WorkflowPlanDraft` JSON；planner prompt 要求模型只输出 draft，不声明可执行。
-  - `python -m OpenCAI.workflow.planner --task "..." --adapter gemini|fake` 可单独测试 planner，不经过 WorkflowRunner；旧 `python -m OpenCAI.workflow_planner ...` 仍保留为兼容入口。
+  - `python -m CodeCAI.workflow.planner --task "..." --adapter gemini|fake` 可单独测试 planner，不经过 WorkflowRunner；旧 `python -m CodeCAI.workflow_planner ...` 仍保留为兼容入口。
   - 当前 deterministic planner 不读取 repo context，不生成任意新 workflow；LLM planner 可接收 `--context-summary`，但输出仍只是 draft。
   - `compile_workflow(task, clarify_result=...)` 会先调用 planner draft，再按 `selected_template` 返回内置 `inspect_handoff` `WorkflowPlan(spec, script)`；真正的 `WorkflowDraftCompiler` 仍待实现。
 
-- `OpenCAI/workflow/clarify.py`
+- `CodeCAI/workflow/clarify.py`
   - 定义 `ClarifyQuestion`、`ClarifyResult`、`ClarifyDecision` 和 `ClarifyRun`。
   - 实现 `ClarifyPhaseRunner`，每次只处理一个 clarify question，默认 `max_rounds=8`。
   - 实现 `LLMClarifyAgent`，允许 clarify 阶段调用 read-only `read_file` / `list_files` / `glob_files` / `search_files` 检查 repo，也允许 `web_search` / `web_fetch` / `web_extract` 检查公开网络资料。
@@ -651,14 +651,14 @@ Script 的用途是表达开发流程内的受限动态控制，而不是让 Ope
   - 实现 `DeterministicClarifyAgent`，用于 fake adapter 和非交互 smoke，默认直接 complete。
   - LLM clarify 输出限制为 `ask_question` / `complete` / `blocked` JSON，schema 错误会转为 blocked，不进入 planner。
 
-- `OpenCAI/workflow/commands.py`
+- `CodeCAI/workflow/commands.py`
   - 接入 `/workflow TASK` workflow command flow。
   - 空 task 输出 `No task for workflow. Usage: /workflow TASK`，不启动 WorkflowRunner。
   - 先运行 clarify gate；blocked 时停止，不进入 planner / runner。
   - complete 后通过 `compile_workflow(task, clarify_result=...)` 获取 `WorkflowPlan`，再交给 `SerialWorkflowRunner` 执行。
   - 当前展示 Spec + Script plan 后直接执行内置 workflow。
 
-- `OpenCAI/tooling/workflow_tools.py`
+- `CodeCAI/tooling/workflow_tools.py`
   - `workflow_plan` 已可渲染当前内置 workflow，并返回 phases / tasks / script 结构。
   - `workflow_execute`、`workflow_status`、`workflow_pause`、`workflow_resume`、`workflow_cancel`、`workflow_replay` 已作为 deferred tools 注册，等待 RuntimeSession workflow controller 接入。
 
@@ -718,16 +718,16 @@ Script 的用途是表达开发流程内的受限动态控制，而不是让 Ope
 修改 Workflow 代码后优先运行：
 
 ```powershell
-python -m py_compile OpenCAI\workflow\core.py OpenCAI\workflow\commands.py OpenCAI\runtime_commands.py tests\test_workflow.py tests\test_runtime_commands.py
+python -m py_compile CodeCAI\workflow\core.py CodeCAI\workflow\commands.py CodeCAI\runtime_commands.py tests\test_workflow.py tests\test_runtime_commands.py
 python -m unittest tests.test_workflow tests.test_runtime_commands
-cmd /c "(echo /workflow Read README&echo /exit)|python -m OpenCAI --adapter fake --max-steps 3"
+cmd /c "(echo /workflow Read README&echo /exit)|python -m CodeCAI --adapter fake --max-steps 3"
 ```
 
 实现 confirmation gate 后增加：
 
 ```powershell
-cmd /c "(echo /workflow Read README&echo execute&echo /exit)|python -m OpenCAI --adapter fake --max-steps 3"
-cmd /c "(echo /workflow Read README&echo cancel&echo /exit)|python -m OpenCAI --adapter fake --max-steps 3"
+cmd /c "(echo /workflow Read README&echo execute&echo /exit)|python -m CodeCAI --adapter fake --max-steps 3"
+cmd /c "(echo /workflow Read README&echo cancel&echo /exit)|python -m CodeCAI --adapter fake --max-steps 3"
 ```
 
 ## 文档维护规则
@@ -738,4 +738,4 @@ cmd /c "(echo /workflow Read README&echo cancel&echo /exit)|python -m OpenCAI --
 - `docs/features/Tools.md` 只保留 workflow tools 作为工具分类和 Tool Model 边界的一部分。
 - Workflow context 的 workflow-specific 设计维护在本文档；通用 Context Engineering 合同维护在 `docs/features/Context Engineering.md`。
 - 不把 workflow 编排塞进 `agent_loop.py`。
-- 不把 NodeFlow 整套状态系统作为 OpenCAI runtime dependency。
+- 不把 NodeFlow 整套状态系统作为 CodeCAI runtime dependency。

@@ -3,9 +3,9 @@ from __future__ import annotations
 import json
 import unittest
 
-from OpenCAI.llm_adapter import Message, ModelOutput
-from OpenCAI.workflow import WorkflowPlan, WorkflowSpec
-from OpenCAI.workflow.planner import (
+from CodeCAI.llm_adapter import Message, ModelOutput
+from CodeCAI.workflow import WorkflowPlan, WorkflowSpec
+from CodeCAI.workflow.planner import (
     LLMWorkflowPlanningAgent,
     PlanningError,
     ScriptOpDraft,

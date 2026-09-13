@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.llm_adapter import LLMAdapterError, Message, ModelOutput
-from OpenCAI.model_smoke import SMOKE_PROMPT, run_model_smoke
-from OpenCAI.tools import ToolSpec
+from CodeCAI.llm_adapter import LLMAdapterError, Message, ModelOutput
+from CodeCAI.model_smoke import SMOKE_PROMPT, run_model_smoke
+from CodeCAI.tools import ToolSpec
 
 
 class FinalAnswerAdapter:

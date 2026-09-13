@@ -2,9 +2,9 @@
 
 ## Feature 目标
 
-Skills 负责把本地可复用的 agent 能力包接入 OpenCAI。它不是普通工具数量扩展，也不是 MCP/plugin 的同义词，而是一层面向规则、模板、脚本、资产和 workflow 经验复用的本地能力系统。
+Skills 负责把本地可复用的 agent 能力包接入 CodeCAI。它不是普通工具数量扩展，也不是 MCP/plugin 的同义词，而是一层面向规则、模板、脚本、资产和 workflow 经验复用的本地能力系统。
 
-目标是让 OpenCAI 支持成熟 Coding Agent 常见的 skill 工作流：
+目标是让 CodeCAI 支持成熟 Coding Agent 常见的 skill 工作流：
 
 - 用户可以通过 `$skill args` 显式调用 skill。
 - 模型可以在看到 `<available_skills>` 后主动调用 skill。
@@ -25,11 +25,11 @@ Skills 负责把本地可复用的 agent 能力包接入 OpenCAI。它不是普�
 - 后续流程继续走普通 model -> tool call -> observation -> model loop。
 - 已调用 skill 会进入状态，供压缩、恢复和后续上下文管理使用。
 
-OpenCAI 的 `$skill` 采用同一类语义：显式入口只请求模型调用 `invoke_skill`，实际加载和 message 注入由 skill tool 完成。
+CodeCAI 的 `$skill` 采用同一类语义：显式入口只请求模型调用 `invoke_skill`，实际加载和 message 注入由 skill tool 完成。
 
-### OpenCAI 本地落点
+### CodeCAI 本地落点
 
-当前 OpenCAI 的 Skill flow：
+当前 CodeCAI 的 Skill flow：
 
 ```text
 user input: $skill args
@@ -106,37 +106,37 @@ user input: $skill args
 
 已完成 V1 闭环：
 
-- `OpenCAI/composer.py`
+- `CodeCAI/composer.py`
   - 支持 `$skill args` 解析为 `SkillInvocationInput`。
   - 支持 `$` skill suggestion。
-  - 当前 suggestion 默认扫描 `<cwd>/.opencai/skills` 和 `~/AgentSkills`。
+  - 当前 suggestion 默认扫描 `<cwd>/.codecai/skills` 和 `~/AgentSkills`。
 
-- `OpenCAI/context.py`
+- `CodeCAI/context.py`
   - 注入 `<available_skills>` 摘要。
   - 支持 `skill_invocation_request` message，显式 `$skill` 时要求模型先调用 `invoke_skill`。
 
-- `OpenCAI/tools.py`
+- `CodeCAI/tools.py`
   - 已注册 `list_skills`、`read_skill`、`invoke_skill`。
-  - `invoke_skill` 从 project `.opencai/skills` 和 `~/AgentSkills` 读取 `SKILL.md`。
+  - `invoke_skill` 从 project `.codecai/skills` 和 `~/AgentSkills` 读取 `SKILL.md`。
   - 返回 `invoked_skill` meta user message。
 
-- `OpenCAI/agent_loop.py`
+- `CodeCAI/agent_loop.py`
   - 对 `invoke_skill` 的 tool result 做摘要化 observation。
   - 成功后追加 `invoked_skill` message 到后续模型上下文。
   - event payload 不携带完整 `SKILL.md`，避免过程视图泄漏大段 prompt。
 
-- `OpenCAI/tui.py`
+- `CodeCAI/tui.py`
   - `invoke_skill` 结果渲染为 `Skill invoked` 摘要。
   - live process / process view 只显示 skill name、ok、path 等调试摘要。
 
-- `OpenCAI/session_context.py`
+- `CodeCAI/session_context.py`
   - `SessionTurnSummary` 记录 invoked skill 摘要。
 
 ## 当前边界
 
 - 显式 `$skill` 目前是 prompt-level enforcement；Runtime 还不会强制拦截“模型未调用 `invoke_skill` 就直接回答”的情况。
 - Skill discovery 尚未抽成统一 `SkillRegistry`；composer suggestion、context summary、`list_skills/read_skill/invoke_skill` 的 roots 和 metadata 语义仍需合并。
-- `list_skills/read_skill` 仍偏 workspace-local inspection；`invoke_skill` 已覆盖 project `.opencai/skills` 和 `~/AgentSkills` 的只读加载第一版。
+- `list_skills/read_skill` 仍偏 workspace-local inspection；`invoke_skill` 已覆盖 project `.codecai/skills` 和 `~/AgentSkills` 的只读加载第一版。
 - 没有 context budget、截断策略和 debug visibility。
 - 没有完整 frontmatter schema。
 - 没有 `allowed-tools`、hooks、脚本执行、模板展开或资产读取合同。

@@ -1,11 +1,11 @@
-# OpenCAI
+# CodeCAI
 
 <p align="center">
   <strong>面向个人开发工作流的现代化 CLI Coding Agent 原型与可审计 Workflow Runtime</strong>
 </p>
 
 <p align="center">
-  <a href="https://github.com/CAI5946/OpenCAI/actions/workflows/tests.yml"><img src="https://img.shields.io/badge/CI-Passing-brightgreen?style=flat-square&logo=githubactions" alt="CI Status"></a>
+  <a href="https://github.com/CAI5946/CodeCAI/actions/workflows/tests.yml"><img src="https://img.shields.io/badge/CI-Passing-brightgreen?style=flat-square&logo=githubactions" alt="CI Status"></a>
   <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?style=flat-square&logo=python" alt="Python Versions">
   <img src="https://img.shields.io/badge/Tests-330%2B%20Passing-success?style=flat-square" alt="Tests">
   <img src="https://img.shields.io/badge/Architecture-Workflow%20IR%20%2B%20Agent%20Loop-orange?style=flat-square" alt="Architecture">
@@ -16,7 +16,7 @@
 
 ## 📖 项目概览
 
-**OpenCAI** 是一个探索下一代 AI 编程交互的 CLI Coding Agent 原型系统。它不仅具备单 Agent 的“理解需求 -> 搜索上下文 -> 工具调用 -> 代码修改 -> 自动验证”闭环能力，更专注于解决复杂编码任务中的**确定性控制、需求澄清门禁、安全沙箱机制与可恢复 Workflow 编排**。
+**CodeCAI** 是一个探索下一代 AI 编程交互的 CLI Coding Agent 原型系统。它不仅具备单 Agent 的“理解需求 -> 搜索上下文 -> 工具调用 -> 代码修改 -> 自动验证”闭环能力，更专注于解决复杂编码任务中的**确定性控制、需求澄清门禁、安全沙箱机制与可恢复 Workflow 编排**。
 
 ### 🌟 核心价值与设计哲学
 
@@ -44,7 +44,7 @@
 ```mermaid
 graph TB
     subgraph UserInterface["🖥️ Interactive TUI & CLI Layer"]
-        CLI["CLI Entrypoint\n(python -m OpenCAI)"]
+        CLI["CLI Entrypoint\n(python -m CodeCAI)"]
         TUI["TUI Composer & Keymap\n(Shift+Enter, Ctrl+O, Tab)"]
         Commands["Slash Commands & Modes\n(/mode, /workflow, /model-add)"]
     end
@@ -86,7 +86,7 @@ graph TB
 ### 1. 安装依赖
 
 ```powershell
-python -m pip install -r OpenCAI\requirements.txt
+python -m pip install -r CodeCAI\requirements.txt
 ```
 
 ### 2. 启动交互式 Runtime（默认无需 API Key）
@@ -94,17 +94,17 @@ python -m pip install -r OpenCAI\requirements.txt
 项目内置确定性 `fake/fake` 模型，无需配置环境变量即可直接启动并体验所有 CLI 交互：
 
 ```powershell
-python -m OpenCAI
+python -m CodeCAI
 ```
 
 *也可以运行一次性测试任务：*
 ```powershell
-python -m OpenCAI --task "Read README"
+python -m CodeCAI --task "Read README"
 ```
 
 ### 3. 配置真实 LLM Provider（可选）
 
-OpenCAI 支持在运行中使用交互式命令配置模型：
+CodeCAI 支持在运行中使用交互式命令配置模型：
 
 ```text
 /model-add     # 选择 Provider、输入 API Key 并动态拉取模型列表
@@ -112,13 +112,13 @@ OpenCAI 支持在运行中使用交互式命令配置模型：
 /model-test    # 对当前模型进行连通性 Smoke Check
 ```
 
-> **安全说明**：所有 API Key 均安全保存在本地 `.env` 中，模型配置写入 `.opencai/models.json`，两者默认被 `.gitignore` 忽略，严格防止凭证泄露。
+> **安全说明**：所有 API Key 均安全保存在本地 `.env` 中，模型配置写入 `.codecai/models.json`，两者默认被 `.gitignore` 忽略，严格防止凭证泄露。
 
 ---
 
 ## 💡 交互模式与核心指令
 
-OpenCAI 提供三种灵活的执行模式（通过 `Shift+Tab` 或 `/mode` 自由切换）：
+CodeCAI 提供三种灵活的执行模式（通过 `Shift+Tab` 或 `/mode` 自由切换）：
 
 * 🤖 **Agent Mode（默认）**：普通任务直接进入 Agent Loop，进行自主工具调用与推理。
 * 📋 **Guided Mode**：普通任务先进入 **Clarify Gate**，LLM 结合仓库上下文提出澄清问题，生成结构化 `DemandBrief` 合同，经由弹窗确认后再执行。
@@ -141,9 +141,9 @@ OpenCAI 提供三种灵活的执行模式（通过 `Shift+Tab` 或 `/mode` 自�
 
 ## 🧠 技术亮点与核心设计决策
 
-针对 AI Coding Agent 在工程落地中的常见挑战，OpenCAI 沉淀了以下关键技术决策：
+针对 AI Coding Agent 在工程落地中的常见挑战，CodeCAI 沉淀了以下关键技术决策：
 
-| 关键技术方向 | 核心挑战 | OpenCAI 的设计决策与工程实现 |
+| 关键技术方向 | 核心挑战 | CodeCAI 的设计决策与工程实现 |
 | :--- | :--- | :--- |
 | **Workflow 编排** | 通用图引擎过度复杂，自由 Agent 易发散 | 确立 **`WorkflowSpec + WorkflowScript`** 双层 IR 设计：Spec 负责外部输入输出与合同审计，Script 作为受限指令集仅表达控制面操作（`run_phase` / `branch` / `handoff`），绝不下沉到工具级。 |
 | **需求澄清与一致性** | 自然语言歧义导致盲目修改代码 | 独立设计 **Clarify Gate** 与 **`DemandBrief`**。模型利用只读工具调研代码库后生成结构化选项提问，将不确定需求固化为可审查的交付合同。 |
@@ -155,7 +155,7 @@ OpenCAI 提供三种灵活的执行模式（通过 `Shift+Tab` 或 `/mode` 自�
 
 ## 🧪 工程质量与自动化验证
 
-OpenCAI 遵循严格的工程化开发规范与自动化测试保障：
+CodeCAI 遵循严格的工程化开发规范与自动化测试保障：
 
 * **全量单元测试**：
   ```powershell
@@ -173,7 +173,7 @@ OpenCAI 遵循严格的工程化开发规范与自动化测试保障：
 
 ## 📚 文档索引
 
-深入阅读 OpenCAI 的架构与详细技术演进：
+深入阅读 CodeCAI 的架构与详细技术演进：
 
 * 📋 [开发状态与最新验证 (docs/status.md)](docs/status.md)
 * 🗺️ [长期产品路线图 (docs/roadmap.md)](docs/roadmap.md)

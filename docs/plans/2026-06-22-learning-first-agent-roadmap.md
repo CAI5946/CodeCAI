@@ -1,16 +1,16 @@
-# Plan: OpenCAI Roadmap
+# Plan: CodeCAI Roadmap
 
 ## 背景
 
-OpenCAI 已从学习型闭环升级为面向完整成熟 Coding Agent 的 CLI 项目。后续路线不再按线性 Phase 推进，而是围绕核心 Feature Epic 迭代：Workflow、Multi-agents、Agent Loop Strategy，以及几个会影响 runtime 架构的候选 feature。
+CodeCAI 已从学习型闭环升级为面向完整成熟 Coding Agent 的 CLI 项目。后续路线不再按线性 Phase 推进，而是围绕核心 Feature Epic 迭代：Workflow、Multi-agents、Agent Loop Strategy，以及几个会影响 runtime 架构的候选 feature。
 
 ## 决策
 
-- 仓库对外定位统一为 `OpenCAI`。
-- `OpenCAI/` 是核心 Python 原型代码。
-- `docs/` 保留 OpenCAI 架构、路线、状态和 feature roadmap。
+- 仓库对外定位统一为 `CodeCAI`。
+- `CodeCAI/` 是核心 Python 原型代码。
+- `docs/` 保留 CodeCAI 架构、路线、状态和 feature roadmap。
 - `examples/` 保留 toy project，用于验证修复闭环。
-- 后续开发以 OpenCAI 自身需求为主线；需要参考时只使用公开资料、成熟工程惯例和项目内已有实现。
+- 后续开发以 CodeCAI 自身需求为主线；需要参考时只使用公开资料、成熟工程惯例和项目内已有实现。
 - 后续开发采用 Feature Epic + 小切片，不再继续新增 Phase 14/15/16 这类线性阶段；小切片是执行方式，不是产品目标上限。
 - 总体目标是完整成熟 Coding Agent；设计时必须先考虑成熟形态所需的状态、权限、验证、可观察性、恢复路径、用户确认、multi-agent 协作和长期扩展接口，再选择当前切片落地范围。
 - Dynamic Workflows 不塞进 `agent_loop.py`。Agent Loop 继续负责单个 agent 的 `model -> tool_call -> observation -> model` 循环；WorkflowRunner 负责 phase 顺序、phase 状态、结果汇总和重试。
@@ -58,7 +58,7 @@ Feature G: Context Engineering
 
 ### Feature A: Workflow
 
-目标：让 OpenCAI 能稳定编排多阶段任务。Workflow 是后续 Multi-agents、LLM-generated workflow 和复杂开发流程的主干。
+目标：让 CodeCAI 能稳定编排多阶段任务。Workflow 是后续 Multi-agents、LLM-generated workflow 和复杂开发流程的主干。
 
 当前状态：第一版已能通过 `/workflow TASK` 执行内置 `inspect -> handoff` 串行 workflow。
 
@@ -131,7 +131,7 @@ Feature G: Context Engineering
 
 ### Feature D: Modes
 
-目标：从 Runtime 层加载 mode profile，例如 `learn mode`、`dev mode`、`debug mode`，让同一套 OpenCAI 可以按任务类型调整行为。
+目标：从 Runtime 层加载 mode profile，例如 `learn mode`、`dev mode`、`debug mode`，让同一套 CodeCAI 可以按任务类型调整行为。
 
 模式可能影响：
 
@@ -198,7 +198,7 @@ Feature G: Context Engineering
 
 ### Feature G: Context Engineering
 
-目标：让 OpenCAI 明确管理 LLM 每轮能看到什么，而不是只把 `user_task` 直接交给 Agent Loop。Context Engineering 是 Runtime、Agent Loop、Workflow、Modes、Multi-agents 和 Memory 的共同基础。
+目标：让 CodeCAI 明确管理 LLM 每轮能看到什么，而不是只把 `user_task` 直接交给 Agent Loop。Context Engineering 是 Runtime、Agent Loop、Workflow、Modes、Multi-agents 和 Memory 的共同基础。
 
 核心模块：
 
@@ -224,7 +224,7 @@ Feature G: Context Engineering
 学习路线：
 
 1. 先理解 Agent Loop 的 `messages` 为什么会随 tool call / tool result 增长。
-2. 再学习 Session 初始化 context：为什么 OpenCAI 不能只传 `user_task`。
+2. 再学习 Session 初始化 context：为什么 CodeCAI 不能只传 `user_task`。
 3. 再学习 Session 内持续对话 context：哪些状态属于 Agent Loop，哪些属于 Runtime / WorkflowRunner。
 4. 最后学习跨对话 memory：memory 如何写入、检索、筛选、验证和注入。
 
@@ -247,7 +247,7 @@ Feature G: Context Engineering
 
 ### Phase 12: Productized CLI
 
-目标：整理 OpenCAI 为可日常试用的最小 CLI。
+目标：整理 CodeCAI 为可日常试用的最小 CLI。
 
 产出：
 
@@ -312,7 +312,7 @@ Context Engineering
 当前推荐主线：
 
 1. 继续收口 Workflow 的 confirmation gate 和 command split。
-2. 设计 Context Engineering 的 Session 初始化 context，先解决 OpenCAI 只传 `user_task` 的缺口。
+2. 设计 Context Engineering 的 Session 初始化 context，先解决 CodeCAI 只传 `user_task` 的缺口。
 3. 设计 `ModeProfile`，先落 runtime 配置切片，不急着改 Agent Loop。
 4. Workflow 稳定后做 Nodeflow bugfix template 和 retry。
 5. 再进入只读 Multi-agents，依赖 scoped context。

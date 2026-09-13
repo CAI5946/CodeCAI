@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.llm_adapter import FakeLLMAdapter, LLMAdapter, ModelOutput
-from OpenCAI.model_manager import ModelManager
-from OpenCAI.model_registry import ModelProfile, ModelRegistryError
-from OpenCAI.tools import ToolSpec
+from CodeCAI.llm_adapter import FakeLLMAdapter, LLMAdapter, ModelOutput
+from CodeCAI.model_manager import ModelManager
+from CodeCAI.model_registry import ModelProfile, ModelRegistryError
+from CodeCAI.tools import ToolSpec
 
 
 class RecordingFactory:

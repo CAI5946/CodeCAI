@@ -19,9 +19,9 @@ Claude Code Dynamic Workflows 的核心是：workflow runtime 执行 orchestrati
 - workflow 中间结果保存在 script variables / runtime state，而不是默认进入模型聊天上下文。
 - workflow script 负责协调 agent；文件、命令和工具动作仍由 agent 执行。
 
-## 对 OpenCAI 的借鉴
+## 对 CodeCAI 的借鉴
 
-OpenCAI 应借鉴的是 control-plane 分层，而不是直接复制 Claude Code 的 JavaScript runtime：
+CodeCAI 应借鉴的是 control-plane 分层，而不是直接复制 Claude Code 的 JavaScript runtime：
 
 ```text
 WorkflowScript
@@ -49,7 +49,7 @@ Tool Model + SafetyPolicy
 
 ## 不直接采用
 
-当前 OpenCAI 不直接采用：
+当前 CodeCAI 不直接采用：
 
 - Claude Code 的 JavaScript workflow script 格式。
 - Claude Code 的后台任务系统。
@@ -57,9 +57,9 @@ Tool Model + SafetyPolicy
 - 大规模并发 subagent。
 - 自动为所有 substantive task 启动 workflow。
 
-## OpenCAI 设计结论
+## CodeCAI 设计结论
 
-OpenCAI 的对应形态：
+CodeCAI 的对应形态：
 
 ```text
 Constrained WorkflowScript

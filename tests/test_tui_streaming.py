@@ -9,8 +9,8 @@ from prompt_toolkit.layout import Layout
 from prompt_toolkit.output import DummyOutput
 from prompt_toolkit.widgets import TextArea
 
-from OpenCAI.events import final_answer, make_event, tool_call, tool_result, user_task
-from OpenCAI.tui import (
+from CodeCAI.events import final_answer, make_event, tool_call, tool_result, user_task
+from CodeCAI.tui import (
     DIVIDER_STYLE,
     create_process_view_key_bindings,
     extract_task_summary,
@@ -35,7 +35,7 @@ class TuiStreamingTests(unittest.TestCase):
             yield user_task(1, "Read README")
             yield final_answer(2, "done")
 
-        with patch("OpenCAI.tui.console.rule"), patch("OpenCAI.tui.render_event") as render_event:
+        with patch("CodeCAI.tui.console.rule"), patch("CodeCAI.tui.render_event") as render_event:
             render_event.side_effect = lambda event: consumed_types.append(event["type"])
             render_event_stream(event_source())
 
@@ -92,9 +92,9 @@ class TuiStreamingTests(unittest.TestCase):
         ]
 
         with (
-            patch("OpenCAI.tui.console.rule") as rule,
-            patch("OpenCAI.tui.console.print"),
-            patch("OpenCAI.tui.Panel") as panel,
+            patch("CodeCAI.tui.console.rule") as rule,
+            patch("CodeCAI.tui.console.print"),
+            patch("CodeCAI.tui.Panel") as panel,
         ):
             render_event_process(events)
 
@@ -116,7 +116,7 @@ class TuiStreamingTests(unittest.TestCase):
                     2,
                     "invoke_skill",
                     True,
-                    {"skill": "demo-skill", "path": ".opencai/skills/demo-skill/SKILL.md"},
+                    {"skill": "demo-skill", "path": ".codecai/skills/demo-skill/SKILL.md"},
                 ),
             ]
         )
@@ -126,7 +126,7 @@ class TuiStreamingTests(unittest.TestCase):
         self.assertNotIn("result:", text)
 
     def test_task_summary_does_not_put_divider_before_final_answer(self) -> None:
-        with patch("OpenCAI.tui.console.rule") as rule, patch("OpenCAI.tui.console.print") as print_:
+        with patch("CodeCAI.tui.console.rule") as rule, patch("CodeCAI.tui.console.print") as print_:
             render_task_summary([user_task(1, "Read README"), final_answer(2, "done")])
 
         rule.assert_not_called()
@@ -134,26 +134,26 @@ class TuiStreamingTests(unittest.TestCase):
         self.assertFalse(any(call.args == () for call in print_.call_args_list))
 
     def test_render_rule_reuses_input_border_style(self) -> None:
-        with patch("OpenCAI.tui.console.rule") as rule:
+        with patch("CodeCAI.tui.console.rule") as rule:
             render_rule("Final answer")
 
         rule.assert_called_once_with("• Final answer", style=DIVIDER_STYLE)
 
     def test_render_rule_keeps_empty_divider_unlabeled(self) -> None:
-        with patch("OpenCAI.tui.console.rule") as rule:
+        with patch("CodeCAI.tui.console.rule") as rule:
             render_rule()
 
         rule.assert_called_once_with("", style=DIVIDER_STYLE)
 
     def test_submitted_input_has_divider_before_line(self) -> None:
-        with patch("OpenCAI.tui.render_rule") as rule, patch("OpenCAI.tui.console.print") as print_:
+        with patch("CodeCAI.tui.render_rule") as rule, patch("CodeCAI.tui.console.print") as print_:
             render_submitted_input("Read README")
 
         rule.assert_called_once_with()
         print_.assert_called_once_with("• Submitted task:\nRead README", style="dim")
 
     def test_task_summary_includes_divider_before_submitted_task(self) -> None:
-        with patch("OpenCAI.tui.render_rule") as rule, patch("OpenCAI.tui.console.print"):
+        with patch("CodeCAI.tui.render_rule") as rule, patch("CodeCAI.tui.console.print"):
             render_task_summary(
                 [user_task(1, "Read README"), final_answer(2, "done")],
                 include_submitted_task=True,
@@ -189,7 +189,7 @@ class TuiStreamingTests(unittest.TestCase):
         self.assertNotIn("Read README", text)
 
     def test_live_process_renderer_uses_transient_live_region(self) -> None:
-        with patch("OpenCAI.tui.Live") as live_class:
+        with patch("CodeCAI.tui.Live") as live_class:
             with LiveProcessRenderer() as renderer:
                 renderer.update([tool_call(2, "read_file", {"path": "README.md"})])
 
@@ -215,7 +215,7 @@ class TuiStreamingTests(unittest.TestCase):
     def test_show_process_view_prints_process_for_non_tty(self) -> None:
         events = [user_task(1, "Read README"), final_answer(2, "done")]
 
-        with patch("OpenCAI.tui.sys.stdin.isatty", return_value=False), patch("OpenCAI.tui.render_event_process") as render_process:
+        with patch("CodeCAI.tui.sys.stdin.isatty", return_value=False), patch("CodeCAI.tui.render_event_process") as render_process:
             show_process_view(events)
 
         render_process.assert_called_once_with(events, skip_user_task=True)
@@ -224,8 +224,8 @@ class TuiStreamingTests(unittest.TestCase):
         events = [user_task(1, "Read README"), final_answer(2, "done")]
 
         with (
-            patch("OpenCAI.tui.sys.stdin.isatty", return_value=True),
-            patch("OpenCAI.tui.Application") as application,
+            patch("CodeCAI.tui.sys.stdin.isatty", return_value=True),
+            patch("CodeCAI.tui.Application") as application,
         ):
             show_process_view(events)
 

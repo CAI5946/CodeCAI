@@ -17,7 +17,7 @@
 - `policy-and-permission.md`：Workflow task / phase scoped tool policy 和权限合并规则。
 - `state-and-replay.md`：WorkflowRun 状态账本、artifacts、verification evidence 和 save / replay 边界。
 - `claude-code-dynamic-workflows.md`：Claude Code Dynamic Workflows 参考设计。
-- `nodeflow-reference.md`：Nodeflow 参考设计和 OpenCAI 映射。
+- `nodeflow-reference.md`：Nodeflow 参考设计和 CodeCAI 映射。
 
 ## 维护规则
 

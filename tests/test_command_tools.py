@@ -6,7 +6,7 @@ import tempfile
 import time
 import unittest
 
-from OpenCAI.tooling.command_tools import (
+from CodeCAI.tooling.command_tools import (
     COMMAND_SESSIONS,
     read_command,
     run_command,

@@ -4,9 +4,9 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from OpenCAI.context import ContextComposer, ContextProvider
-from OpenCAI.demand import DemandBrief
-from OpenCAI.session_context import SessionContext, SessionTurnSummary
+from CodeCAI.context import ContextComposer, ContextProvider
+from CodeCAI.demand import DemandBrief
+from CodeCAI.session_context import SessionContext, SessionTurnSummary
 
 
 class ContextProviderTests(unittest.TestCase):
@@ -154,7 +154,7 @@ class ContextProviderTests(unittest.TestCase):
                 "user_task",
             ],
         )
-        self.assertIn("OpenCAI", messages[0]["content"])
+        self.assertIn("CodeCAI", messages[0]["content"])
         self.assertIn("<project_instructions", messages[1]["content"])
         self.assertIn("project rule", messages[1]["content"])
         self.assertIn("override global", messages[1]["content"])

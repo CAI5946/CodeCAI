@@ -5,8 +5,8 @@ import unittest
 from prompt_toolkit.document import Document
 from unittest.mock import patch
 
-from OpenCAI.composer import Suggestion
-from OpenCAI.tui import RuntimeCommandCompleter, accept_composer_suggestion, has_composer_suggestions
+from CodeCAI.composer import Suggestion
+from CodeCAI.tui import RuntimeCommandCompleter, accept_composer_suggestion, has_composer_suggestions
 
 
 class RuntimeCommandCompleterTests(unittest.TestCase):
@@ -26,7 +26,7 @@ class RuntimeCommandCompleterTests(unittest.TestCase):
 
     def test_dollar_prefix_lists_skills(self) -> None:
         with patch(
-            "OpenCAI.tui.build_suggestions",
+            "CodeCAI.tui.build_suggestions",
             return_value=[Suggestion("$learn-with-dev", "Teach then implement.")],
         ):
             completions = list(RuntimeCommandCompleter().get_completions(Document("$lea"), None))

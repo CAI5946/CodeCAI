@@ -13,9 +13,9 @@ from prompt_toolkit.input.defaults import create_pipe_input
 from prompt_toolkit.layout.controls import BufferControl
 from prompt_toolkit.output import DummyOutput
 
-from OpenCAI import __version__
-from OpenCAI.safety import PermissionProfile
-from OpenCAI.tui import (
+from CodeCAI import __version__
+from CodeCAI.safety import PermissionProfile
+from CodeCAI.tui import (
     DEFAULT_STATUS_BAR_ITEMS,
     EXIT_SHORTCUT_COMMAND,
     INPUT_BORDER_CHAR,
@@ -72,7 +72,7 @@ class StatusBarTests(unittest.TestCase):
                     app.exit(result=buffer.text)
                 return True
 
-            buffer = __import__("OpenCAI.tui", fromlist=["create_task_buffer"]).create_task_buffer(
+            buffer = __import__("CodeCAI.tui", fromlist=["create_task_buffer"]).create_task_buffer(
                 accept_input,
                 history_entries=history_entries,
             )
@@ -120,11 +120,11 @@ class StatusBarTests(unittest.TestCase):
         self.assertEqual(SELECT_PROMPT_STYLE_RULES["item"], "fg:default bg:default")
         self.assertEqual(SELECT_PROMPT_STYLE_RULES["description"], "ansibrightblack bg:default")
         self.assertEqual(
-            SELECT_PROMPT_STYLE_RULES["opencai-selected"],
+            SELECT_PROMPT_STYLE_RULES["codecai-selected"],
             "bold ansibrightcyan bg:default noreverse",
         )
         self.assertEqual(
-            SELECT_PROMPT_STYLE_RULES["opencai-selected-description"],
+            SELECT_PROMPT_STYLE_RULES["codecai-selected-description"],
             "bold ansibrightcyan bg:default noreverse",
         )
 
@@ -354,7 +354,7 @@ class StatusBarTests(unittest.TestCase):
         self.assertEqual(self.run_task_input_keys("/model\x1b[B\r"), "/model-add")
 
     def test_command_completion_down_moves_highlight_without_changing_input(self) -> None:
-        tui = __import__("OpenCAI.tui", fromlist=["_select_composer_suggestion_for_buffer"])
+        tui = __import__("CodeCAI.tui", fromlist=["_select_composer_suggestion_for_buffer"])
         buffer = Buffer()
         buffer.set_document(Document("/model", cursor_position=len("/model")))
 
@@ -369,7 +369,7 @@ class StatusBarTests(unittest.TestCase):
         self.assertEqual(buffer.complete_state.complete_index, 1)
 
     def test_command_completion_refresh_does_not_auto_accept_first_suggestion(self) -> None:
-        tui = __import__("OpenCAI.tui", fromlist=["_refresh_completions"])
+        tui = __import__("CodeCAI.tui", fromlist=["_refresh_completions"])
         buffer = Buffer()
         buffer.set_document(Document("/", cursor_position=len("/")))
 
@@ -381,7 +381,7 @@ class StatusBarTests(unittest.TestCase):
 
     def test_command_completion_escape_suppresses_accepting_current_suggestions(self) -> None:
         tui = __import__(
-            "OpenCAI.tui",
+            "CodeCAI.tui",
             fromlist=["_accept_composer_suggestion_for_buffer", "_dismiss_composer_suggestions_for_buffer"],
         )
         buffer = Buffer()
@@ -393,7 +393,7 @@ class StatusBarTests(unittest.TestCase):
 
     def test_command_completion_tab_accepts_highlighted_command_without_submit(self) -> None:
         tui = __import__(
-            "OpenCAI.tui",
+            "CodeCAI.tui",
             fromlist=["_accept_composer_suggestion_for_buffer", "_select_composer_suggestion_for_buffer"],
         )
         buffer = Buffer()
@@ -524,7 +524,7 @@ class StatusBarTests(unittest.TestCase):
                     app.exit(result=buffer.text)
                 return True
 
-            buffer = __import__("OpenCAI.tui", fromlist=["create_task_buffer"]).create_task_buffer(
+            buffer = __import__("CodeCAI.tui", fromlist=["create_task_buffer"]).create_task_buffer(
                 accept_input,
                 history_entries=["Read README"],
             )
@@ -550,7 +550,7 @@ class StatusBarTests(unittest.TestCase):
                     app.exit(result=buffer.text)
                 return True
 
-            buffer = __import__("OpenCAI.tui", fromlist=["create_task_buffer"]).create_task_buffer(
+            buffer = __import__("CodeCAI.tui", fromlist=["create_task_buffer"]).create_task_buffer(
                 accept_input,
                 history_entries=["Read README", "Run tests"],
             )
@@ -585,14 +585,14 @@ class StatusBarTests(unittest.TestCase):
 
     def test_ask_task_does_not_echo_process_shortcut_handoff(self) -> None:
         with (
-            patch("OpenCAI.tui.sys.stdin.isatty", return_value=True),
-            patch("OpenCAI.tui.Application") as application,
-            patch("OpenCAI.tui.render_submitted_input") as render_submitted,
+            patch("CodeCAI.tui.sys.stdin.isatty", return_value=True),
+            patch("CodeCAI.tui.Application") as application,
+            patch("CodeCAI.tui.render_submitted_input") as render_submitted,
         ):
             application.return_value.run.return_value = PROCESS_SHORTCUT_COMMAND
 
             self.assertEqual(
-                __import__("OpenCAI.tui", fromlist=["ask_task"]).ask_task(),
+                __import__("CodeCAI.tui", fromlist=["ask_task"]).ask_task(),
                 PROCESS_SHORTCUT_COMMAND,
             )
 

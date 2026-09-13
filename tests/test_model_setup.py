@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.model_registry import ModelRegistryError
-from OpenCAI.model_setup import build_default_model_profile, next_profile_id
+from CodeCAI.model_registry import ModelRegistryError
+from CodeCAI.model_setup import build_default_model_profile, next_profile_id
 
 
 class ModelSetupTests(unittest.TestCase):

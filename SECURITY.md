@@ -1,6 +1,6 @@
 # Security Policy
 
-OpenCAI is an Alpha-stage local CLI Coding Agent prototype. It can read files,
+CodeCAI is an Alpha-stage local CLI Coding Agent prototype. It can read files,
 run commands, and modify a workspace according to the active permission
 profile. Do not use it on sensitive repositories without reviewing the tool
 and permission configuration first.

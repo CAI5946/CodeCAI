@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.llm_adapter import LLMAdapterError
-from OpenCAI.model_discovery import list_provider_models
+from CodeCAI.llm_adapter import LLMAdapterError
+from CodeCAI.model_discovery import list_provider_models
 
 
 class ModelDiscoveryTests(unittest.TestCase):

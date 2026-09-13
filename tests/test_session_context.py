@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.events import final_answer, tool_call, tool_result, user_task, verification
-from OpenCAI.session_context import SessionContext, summarize_turn_events
+from CodeCAI.events import final_answer, tool_call, tool_result, user_task, verification
+from CodeCAI.session_context import SessionContext, summarize_turn_events
 
 
 class SessionContextTests(unittest.TestCase):

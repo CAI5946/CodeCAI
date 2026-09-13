@@ -2,10 +2,10 @@ import unittest
 from pathlib import Path
 import tempfile
 
-from OpenCAI.agent_loop import run_agent_loop
-from OpenCAI.llm_adapter import LLMAdapter, Message, ModelOutput
-from OpenCAI.safety import PermissionProfile, SafetyPolicy
-from OpenCAI.tools import ToolSpec
+from CodeCAI.agent_loop import run_agent_loop
+from CodeCAI.llm_adapter import LLMAdapter, Message, ModelOutput
+from CodeCAI.safety import PermissionProfile, SafetyPolicy
+from CodeCAI.tools import ToolSpec
 
 
 class SingleToolCallAdapter:

@@ -1,8 +1,8 @@
-# OpenCAI Roadmap
+# CodeCAI Roadmap
 
 ## 目标
 
-OpenCAI 的目标是成为面向个人开发工作流的完整成熟 CLI Coding Agent：能理解任务、读取上下文、调用工具、修改文件、运行验证、处理失败并继续迭代。
+CodeCAI 的目标是成为面向个人开发工作流的完整成熟 CLI Coding Agent：能理解任务、读取上下文、调用工具、修改文件、运行验证、处理失败并继续迭代。
 
 小切片只是开发和验证方式，不代表产品目标停留在玩具版或最小 MVP。
 
@@ -10,7 +10,7 @@ OpenCAI 的目标是成为面向个人开发工作流的完整成熟 CLI Coding 
 
 当前主线是 Feature A: Workflow。Workflow 的定位是面向 Coding Agent 的稳定开发流程 runtime，而不是通用流程引擎。先把固定开发流程做成可确认、可观察、可失败恢复的 runtime control layer，再逐步扩展到 Nodeflow-style bugfix workflow、review / verify retry loop、humancheck、save/replay 和只读 parallel inspect / review。
 
-并行产品验收目标是 Small-Task Coding Agent Competence：用本地 micro benchmark 衡量 OpenCAI 在小型代码任务上的真实表现，避免只靠主观感觉推进架构。
+并行产品验收目标是 Small-Task Coding Agent Competence：用本地 micro benchmark 衡量 CodeCAI 在小型代码任务上的真实表现，避免只靠主观感觉推进架构。
 
 ## Feature Epics
 
@@ -50,7 +50,7 @@ OpenCAI 的目标是成为面向个人开发工作流的完整成熟 CLI Coding 
 
 暂不优先做多模型投票式 council，避免早期引入高噪声和高成本决策层。
 
-当前基础能力：Runtime 已支持 `provider/model` profile、`/model-add` provider setup、动态 model discovery、`.env` key 写入、`.opencai/models.json` profile 持久化和 `/model` 已注册 profile 选择。真实模型不再作为内置默认项；默认只保留 `fake/fake`。
+当前基础能力：Runtime 已支持 `provider/model` profile、`/model-add` provider setup、动态 model discovery、`.env` key 写入、`.codecai/models.json` profile 持久化和 `/model` 已注册 profile 选择。真实模型不再作为内置默认项；默认只保留 `fake/fake`。
 
 后续优先级：先做真实 provider smoke，再优化 `/model-add` 长列表搜索和 provider alias；model options / effort 暂缓。
 

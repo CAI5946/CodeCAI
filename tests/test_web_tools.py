@@ -5,7 +5,7 @@ from pathlib import Path
 import unittest
 from unittest.mock import patch
 
-from OpenCAI.tools import TOOLS, run_tool
+from CodeCAI.tools import TOOLS, run_tool
 
 
 class FakeHttpResponse:
@@ -48,7 +48,7 @@ class WebToolsTest(unittest.TestCase):
         </body></html>
         """
 
-        with patch("OpenCAI.tooling.web_tools.urlopen", return_value=FakeHttpResponse(html)):
+        with patch("CodeCAI.tooling.web_tools.urlopen", return_value=FakeHttpResponse(html)):
             result = run_tool("web_search", {"query": "opencai", "max_results": 1}, Path.cwd())
 
         self.assertTrue(result["ok"])
@@ -61,7 +61,7 @@ class WebToolsTest(unittest.TestCase):
         self.assertIn("https://example.com/one", result["result"]["content"])
 
     def test_web_fetch_returns_bounded_content_and_metadata(self) -> None:
-        with patch("OpenCAI.tooling.web_tools.urlopen", return_value=FakeHttpResponse("abcdef")):
+        with patch("CodeCAI.tooling.web_tools.urlopen", return_value=FakeHttpResponse("abcdef")):
             result = run_tool(
                 "web_fetch",
                 {"url": "https://example.com/page", "max_chars": 3},

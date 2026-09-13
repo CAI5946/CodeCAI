@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from OpenCAI.llm_adapter import FakeLLMAdapter
-from OpenCAI.model_registry import ModelProfile, ModelRegistry, ModelRegistryError
+from CodeCAI.llm_adapter import FakeLLMAdapter
+from CodeCAI.model_registry import ModelProfile, ModelRegistry, ModelRegistryError
 
 
 class ModelRegistryTests(unittest.TestCase):

@@ -2,6 +2,7 @@
 .env.*
 !.env.example
 .opencai/models.json
+.codecai/models.json
 .codex/config.toml
 __pycache__/
 *.py[cod]

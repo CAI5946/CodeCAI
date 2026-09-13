@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from OpenCAI.llm_config import (
+from CodeCAI.llm_config import (
     DEFAULT_LLM_CONFIG_PATH,
     LLM_CONFIG_ENV,
     load_model_profiles,
@@ -15,7 +15,7 @@ from OpenCAI.llm_config import (
     save_env_value,
     save_model_profile,
 )
-from OpenCAI.model_registry import ModelProfile, ModelRegistryError
+from CodeCAI.model_registry import ModelProfile, ModelRegistryError
 
 
 class LLMConfigTests(unittest.TestCase):
@@ -68,7 +68,7 @@ class LLMConfigTests(unittest.TestCase):
 
     def test_saves_new_profile_to_config(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
-            path = Path(temp_dir) / ".opencai" / "models.json"
+            path = Path(temp_dir) / ".codecai" / "models.json"
 
             save_model_profile(
                 path,

@@ -1,6 +1,6 @@
-# OpenCAI Domain Language
+# CodeCAI Domain Language
 
-OpenCAI 的领域语言用于约束 Coding Agent runtime、workflow control plane 和开发流程语义，避免把流程、状态、工具执行和提示词混成一层。
+CodeCAI 的领域语言用于约束 Coding Agent runtime、workflow control plane 和开发流程语义，避免把流程、状态、工具执行和提示词混成一层。
 
 ## Language
 

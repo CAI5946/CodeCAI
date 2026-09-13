@@ -2,7 +2,7 @@
 
 ## 项目概览
 
-- 本项目是 OpenCAI：面向个人开发工作流的 CLI Coding Agent 原型。
+- 本项目是 CodeCAI：面向个人开发工作流的 CLI Coding Agent 原型。
 - 当前主线是 Workflow：在单 Agent Loop 之上演进可确认、可观察、可恢复的 workflow runtime。
 - 当前状态以 `docs/status.md` 为准，长期路线以 `docs/roadmap.md` 为准。
 
@@ -11,13 +11,13 @@
 - 语言：Python。
 - 测试：标准库 `unittest`。
 - LLM：默认 `GeminiAdapter`；本地确定性调试用 `--adapter fake`。
-- 依赖文件：`OpenCAI/requirements.txt`。
-- CLI 入口：`python -m OpenCAI`、`OpenCAI\opencai.cmd`。
+- 依赖文件：`CodeCAI/requirements.txt`。
+- CLI 入口：`python -m CodeCAI`、`CodeCAI\codecai.cmd`。
 
 ## 目录结构
 
-- `OpenCAI/`: Python 原型源码。
-- `OpenCAI/tooling/`: 工具系统分类模块；`OpenCAI/tools.py` 是兼容门面。
+- `CodeCAI/`: Python 原型源码。
+- `CodeCAI/tooling/`: 工具系统分类模块；`CodeCAI/tools.py` 是兼容门面。
 - `tests/`: 单元测试。
 - `benchmarks/`: small-task coding agent benchmark harness、fixtures 和 tasks。
 - `docs/`: 项目路线、设计文档、状态和日志。
@@ -33,19 +33,19 @@
 - 涉及学习型开发模式或阶段推进时读 `docs/learning-mode.md`。
 - 涉及 Workflow 主线时读 `docs/archive/phases/phase-13-dynamic-workflows.md` 和 `docs/features/Workflow.md`。
 - 涉及 Context Engineering 时读 `docs/features/Context Engineering.md`。
-- 涉及工具系统时读 `docs/features/Tools.md`、`OpenCAI/tooling/` 和 `OpenCAI/tools.py`。
+- 涉及工具系统时读 `docs/features/Tools.md`、`CodeCAI/tooling/` 和 `CodeCAI/tools.py`。
 
 ## 常用命令
 
-- 安装依赖：`python -m pip install -r OpenCAI/requirements.txt`。
-- 启动 runtime：`python -m OpenCAI`。
-- 一次性 task：`python -m OpenCAI --task "Read README"`。
-- 显式 fake adapter：`python -m OpenCAI --adapter fake`。
-- 查看版本：`python -m OpenCAI --version`。
-- Workflow smoke：`cmd /c "(echo /workflow Read README&echo /exit)|python -m OpenCAI --adapter fake --max-steps 3"`。
-- Workflow planner dry run：`python -m OpenCAI.workflow_planner --task "Read README" --adapter fake`。
-- Workflow planner JSON：`python -m OpenCAI.workflow_planner --task "Read README" --adapter fake --json`。
-- Python 语法检查：`python -m py_compile OpenCAI\__main__.py OpenCAI\__init__.py OpenCAI\tui.py OpenCAI\agent_loop.py OpenCAI\llm_adapter.py`。
+- 安装依赖：`python -m pip install -r CodeCAI/requirements.txt`。
+- 启动 runtime：`python -m CodeCAI`。
+- 一次性 task：`python -m CodeCAI --task "Read README"`。
+- 显式 fake adapter：`python -m CodeCAI --adapter fake`。
+- 查看版本：`python -m CodeCAI --version`。
+- Workflow smoke：`cmd /c "(echo /workflow Read README&echo /exit)|python -m CodeCAI --adapter fake --max-steps 3"`。
+- Workflow planner dry run：`python -m CodeCAI.workflow_planner --task "Read README" --adapter fake`。
+- Workflow planner JSON：`python -m CodeCAI.workflow_planner --task "Read README" --adapter fake --json`。
+- Python 语法检查：`python -m py_compile CodeCAI\__main__.py CodeCAI\__init__.py CodeCAI\tui.py CodeCAI\agent_loop.py CodeCAI\llm_adapter.py`。
 - 全量测试：`python -m unittest discover tests`。
 - Benchmark fake baseline：`python -m benchmarks.runner --task all --timeout 30`。
 - Benchmark Gemini baseline：`python -m benchmarks.runner --task all --adapter gemini --timeout 180`。
@@ -53,9 +53,9 @@
 ## 开发约定
 
 - 保持小切片、可验证；不要把 workflow 编排塞进 `agent_loop.py`。
-- `OpenCAI/tui.py` 只负责 input helper 和 transcript renderer，不承载 Agent 决策逻辑。
+- `CodeCAI/tui.py` 只负责 input helper 和 transcript renderer，不承载 Agent 决策逻辑。
 - Workflow 当前主表达是 `WorkflowSpec + WorkflowScript`；`WorkflowScript` 只表达 `run_phase` / `branch` / `retry` / `humancheck` / `handoff` / `stop` 等 control-plane op，不下沉到 read/edit/command。
-- 新工具默认进入 `OpenCAI/tooling/<category>_tools.py`；不要继续堆回 `OpenCAI/tools.py`。
+- 新工具默认进入 `CodeCAI/tooling/<category>_tools.py`；不要继续堆回 `CodeCAI/tools.py`。
 - SafetyPolicy 已接入工具执行前置检查；默认 permission profile 是 `approve-safe`。
 - Context Engineering 当前从 Session 初始化 context、AGENTS.md entry points 和 provider-independent messages 开始，不默认引入 vector DB 或长期 memory。
 - 不新增嵌套 `AGENTS.md`，除非子目录有明确不同的命令或规则。
@@ -64,7 +64,7 @@
 ## Reference-first
 
 - 用户要求参考 Claude Code 或 Codex 设计时，优先查看本地 `references/claude-code/` 和 `references/codex/`。
-- `references/` 是 reference-only 目录，默认被 `.gitignore` 忽略，不作为 OpenCAI 源码提交。
+- `references/` 是 reference-only 目录，默认被 `.gitignore` 忽略，不作为 CodeCAI 源码提交。
 - 参考本地源码时，只提炼模块边界、交互流程、数据结构和工程取舍；不要复制实现代码。
 - 如果本地参考不足，再查公开文档、成熟工程惯例或其他开源实现。
 
@@ -79,9 +79,9 @@
 
 - 修改文档：至少读取目标文件并检查 diff。
 - 修改 Python 原型：运行相关入口命令，并至少运行 `python -m py_compile` 覆盖改动文件。
-- 修改 Runtime 入口：运行 `python -m OpenCAI --help`、dry run 和一次 fake loop。
+- 修改 Runtime 入口：运行 `python -m CodeCAI --help`、dry run 和一次 fake loop。
 - 修改 Workflow：优先运行 `python -m unittest tests.test_workflow_planner tests.test_workflow tests.test_workflow_commands tests.test_runtime_commands tests.test_tool_taxonomy`，并跑 `/workflow` smoke。
-- 修改 Workflow Planner：至少运行 `python -m unittest tests.test_workflow_planner` 和 `python -m OpenCAI.workflow_planner --task "Read README" --adapter fake`。
+- 修改 Workflow Planner：至少运行 `python -m unittest tests.test_workflow_planner` 和 `python -m CodeCAI.workflow_planner --task "Read README" --adapter fake`。
 - 修改 Context Engineering：优先运行 `python -m unittest tests.test_context tests.test_llm_adapter tests.test_runtime_session tests.test_agent_loop_streaming`。
 - 只有 `python -m unittest discover tests` 通过后，才能声称全量测试通过。
 

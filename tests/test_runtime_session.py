@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from OpenCAI.__main__ import (
+from CodeCAI.__main__ import (
     RuntimeSession,
     build_parser,
     build_runtime_model_manager,
@@ -12,15 +12,15 @@ from OpenCAI.__main__ import (
     run_interactive,
     run_once,
 )
-from OpenCAI.composer import SkillInvocationInput
-from OpenCAI.context import ContextComposer, ContextProvider
-from OpenCAI.demand import DemandBrief
-from OpenCAI.events import Event, final_answer, tool_call, tool_result, user_task, verification
-from OpenCAI.guided import PendingGuidedReview
-from OpenCAI.llm_adapter import FakeLLMAdapter, Message, ModelOutput
-from OpenCAI.model_registry import ModelProfile, ModelRegistry
-from OpenCAI.safety import PermissionProfile, SafetyPolicy
-from OpenCAI.tools import ToolSpec
+from CodeCAI.composer import SkillInvocationInput
+from CodeCAI.context import ContextComposer, ContextProvider
+from CodeCAI.demand import DemandBrief
+from CodeCAI.events import Event, final_answer, tool_call, tool_result, user_task, verification
+from CodeCAI.guided import PendingGuidedReview
+from CodeCAI.llm_adapter import FakeLLMAdapter, Message, ModelOutput
+from CodeCAI.model_registry import ModelProfile, ModelRegistry
+from CodeCAI.safety import PermissionProfile, SafetyPolicy
+from CodeCAI.tools import ToolSpec
 
 
 class RecordingFinalAnswerAdapter:
@@ -120,8 +120,8 @@ class RuntimeSessionTests(unittest.TestCase):
 
     def test_run_once_returns_events_and_renders_collapsed_summary(self) -> None:
         with (
-            patch("OpenCAI.__main__.render_task_summary") as render_summary,
-            patch("OpenCAI.__main__.LiveProcessRenderer") as renderer_class,
+            patch("CodeCAI.__main__.render_task_summary") as render_summary,
+            patch("CodeCAI.__main__.LiveProcessRenderer") as renderer_class,
         ):
             events = run_once(
                 "Read README",
@@ -144,8 +144,8 @@ class RuntimeSessionTests(unittest.TestCase):
         adapter = RecordingFinalAnswerAdapter()
 
         with (
-            patch("OpenCAI.__main__.render_task_summary"),
-            patch("OpenCAI.__main__.LiveProcessRenderer"),
+            patch("CodeCAI.__main__.render_task_summary"),
+            patch("CodeCAI.__main__.LiveProcessRenderer"),
         ):
             events = run_once(
                 "Read README",
@@ -172,8 +172,8 @@ class RuntimeSessionTests(unittest.TestCase):
         adapter = RecordingFinalAnswerAdapter()
 
         with (
-            patch("OpenCAI.__main__.render_task_summary"),
-            patch("OpenCAI.__main__.LiveProcessRenderer"),
+            patch("CodeCAI.__main__.render_task_summary"),
+            patch("CodeCAI.__main__.LiveProcessRenderer"),
         ):
             run_once(
                 "continue workflow",
@@ -209,8 +209,8 @@ class RuntimeSessionTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.__main__.render_task_summary"),
-            patch("OpenCAI.__main__.LiveProcessRenderer"),
+            patch("CodeCAI.__main__.render_task_summary"),
+            patch("CodeCAI.__main__.LiveProcessRenderer"),
         ):
             run_once(
                 "Update README guided docs",
@@ -247,9 +247,9 @@ class RuntimeSessionTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.__main__.ask_task", side_effect=["Read README", "/exit"]),
-            patch("OpenCAI.__main__.run_once", return_value=last_events),
-            patch("OpenCAI.__main__.handle_runtime_command", return_value=True),
+            patch("CodeCAI.__main__.ask_task", side_effect=["Read README", "/exit"]),
+            patch("CodeCAI.__main__.run_once", return_value=last_events),
+            patch("CodeCAI.__main__.handle_runtime_command", return_value=True),
         ):
             status = run_interactive(session, api_key=None)
 
@@ -283,9 +283,9 @@ class RuntimeSessionTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.__main__.ask_task", side_effect=["Read README", "/exit"]),
-            patch("OpenCAI.__main__.run_once", return_value=last_events) as run_once_mock,
-            patch("OpenCAI.__main__.handle_runtime_command", return_value=True),
+            patch("CodeCAI.__main__.ask_task", side_effect=["Read README", "/exit"]),
+            patch("CodeCAI.__main__.run_once", return_value=last_events) as run_once_mock,
+            patch("CodeCAI.__main__.handle_runtime_command", return_value=True),
         ):
             status = run_interactive(session, api_key=None)
 
@@ -307,9 +307,9 @@ class RuntimeSessionTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.__main__.ask_task", side_effect=["$learn-with-dev", "/exit"]),
-            patch("OpenCAI.__main__.run_once", return_value=last_events) as run_once_mock,
-            patch("OpenCAI.__main__.handle_runtime_command", return_value=True),
+            patch("CodeCAI.__main__.ask_task", side_effect=["$learn-with-dev", "/exit"]),
+            patch("CodeCAI.__main__.run_once", return_value=last_events) as run_once_mock,
+            patch("CodeCAI.__main__.handle_runtime_command", return_value=True),
         ):
             status = run_interactive(session, api_key=None)
 
@@ -343,9 +343,9 @@ class RuntimeSessionTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.__main__.ask_task", side_effect=["Read README", "Continue", "/exit"]),
-            patch("OpenCAI.__main__.run_once", side_effect=[first_events, second_events]) as run_once_mock,
-            patch("OpenCAI.__main__.handle_runtime_command", return_value=True),
+            patch("CodeCAI.__main__.ask_task", side_effect=["Read README", "Continue", "/exit"]),
+            patch("CodeCAI.__main__.run_once", side_effect=[first_events, second_events]) as run_once_mock,
+            patch("CodeCAI.__main__.handle_runtime_command", return_value=True),
         ):
             status = run_interactive(session, api_key=None)
 
@@ -366,8 +366,8 @@ class RuntimeSessionTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.__main__.ask_task", side_effect=["/process", "/exit"]),
-            patch("OpenCAI.__main__.handle_runtime_command", side_effect=[False, True]) as handle_command,
+            patch("CodeCAI.__main__.ask_task", side_effect=["/process", "/exit"]),
+            patch("CodeCAI.__main__.handle_runtime_command", side_effect=[False, True]) as handle_command,
         ):
             status = run_interactive(session, api_key=None)
 
@@ -385,10 +385,10 @@ class RuntimeSessionTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.__main__.ask_task", side_effect=["/workflow Read README", "/exit"]),
-            patch("OpenCAI.__main__.handle_workflow_command") as handle_workflow,
-            patch("OpenCAI.__main__.handle_runtime_command", return_value=True) as handle_command,
-            patch("OpenCAI.__main__.run_once") as run_once_mock,
+            patch("CodeCAI.__main__.ask_task", side_effect=["/workflow Read README", "/exit"]),
+            patch("CodeCAI.__main__.handle_workflow_command") as handle_workflow,
+            patch("CodeCAI.__main__.handle_runtime_command", return_value=True) as handle_command,
+            patch("CodeCAI.__main__.run_once") as run_once_mock,
         ):
             status = run_interactive(session, api_key=None)
 
@@ -408,10 +408,10 @@ class RuntimeSessionTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.__main__.ask_task", side_effect=["Read README", "/exit"]) as ask_task,
-            patch("OpenCAI.__main__.handle_workflow_command") as handle_workflow,
-            patch("OpenCAI.__main__.handle_runtime_command", return_value=True),
-            patch("OpenCAI.__main__.run_once") as run_once_mock,
+            patch("CodeCAI.__main__.ask_task", side_effect=["Read README", "/exit"]) as ask_task,
+            patch("CodeCAI.__main__.handle_workflow_command") as handle_workflow,
+            patch("CodeCAI.__main__.handle_runtime_command", return_value=True),
+            patch("CodeCAI.__main__.run_once") as run_once_mock,
         ):
             status = run_interactive(session, api_key=None)
 
@@ -443,12 +443,12 @@ class RuntimeSessionTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.__main__.ask_task", side_effect=["Read README", "/exit"]) as ask_task,
-            patch("OpenCAI.__main__.start_guided_review", return_value=pending) as start_guided,
-            patch("OpenCAI.__main__.handle_pending_guided_review", return_value=(None, last_events)) as handle_pending,
-            patch("OpenCAI.__main__.handle_workflow_command") as handle_workflow,
-            patch("OpenCAI.__main__.handle_runtime_command", return_value=True),
-            patch("OpenCAI.__main__.run_once") as run_once_mock,
+            patch("CodeCAI.__main__.ask_task", side_effect=["Read README", "/exit"]) as ask_task,
+            patch("CodeCAI.__main__.start_guided_review", return_value=pending) as start_guided,
+            patch("CodeCAI.__main__.handle_pending_guided_review", return_value=(None, last_events)) as handle_pending,
+            patch("CodeCAI.__main__.handle_workflow_command") as handle_workflow,
+            patch("CodeCAI.__main__.handle_runtime_command", return_value=True),
+            patch("CodeCAI.__main__.run_once") as run_once_mock,
         ):
             status = run_interactive(session, api_key=None)
 
@@ -482,9 +482,9 @@ class RuntimeSessionTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.__main__.ask_task", side_effect=["/exit"]) as ask_task,
-            patch("OpenCAI.__main__.handle_pending_guided_review", return_value=(None, [])) as handle_pending,
-            patch("OpenCAI.__main__.handle_runtime_command", return_value=True),
+            patch("CodeCAI.__main__.ask_task", side_effect=["/exit"]) as ask_task,
+            patch("CodeCAI.__main__.handle_pending_guided_review", return_value=(None, [])) as handle_pending,
+            patch("CodeCAI.__main__.handle_runtime_command", return_value=True),
         ):
             status = run_interactive(session, api_key=None)
 
@@ -503,9 +503,9 @@ class RuntimeSessionTests(unittest.TestCase):
         )
 
         with (
-            patch("OpenCAI.__main__.ask_task", side_effect=["/workflow", "/exit"]),
-            patch("OpenCAI.__main__.handle_workflow_command") as handle_workflow,
-            patch("OpenCAI.__main__.handle_runtime_command", return_value=True),
+            patch("CodeCAI.__main__.ask_task", side_effect=["/workflow", "/exit"]),
+            patch("CodeCAI.__main__.handle_workflow_command") as handle_workflow,
+            patch("CodeCAI.__main__.handle_runtime_command", return_value=True),
         ):
             status = run_interactive(session, api_key=None)
 
